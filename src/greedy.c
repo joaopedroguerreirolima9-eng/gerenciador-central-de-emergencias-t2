@@ -24,12 +24,12 @@ static double valor_absoluto(double x) {
 
 // Distancia aproximada em km: soma o deslocamento norte-sul com o leste-oeste,
 // como quem anda pelas ruas (sem cortar caminho em diagonal).
-static double distancia_km(double lat1, double lng1, double lat2, double lng2) {
+double distancia_km(double lat1, double lng1, double lat2, double lng2) {
     return valor_absoluto(lat1 - lat2) * KM_POR_GRAU_LAT + valor_absoluto(lng1 - lng2) * KM_POR_GRAU_LNG;
 }
 
 // Prioridade da categoria: 1 = EMS (risco a vida), 2 = Fire, 3 = Traffic, 4 = outras.
-static int prioridade_categoria(Ocorrencia *o) {
+int prioridade_categoria(const Ocorrencia *o) {
     if (strncmp(o->tipo, "EMS", 3) == 0) {
         return 1;
     }
