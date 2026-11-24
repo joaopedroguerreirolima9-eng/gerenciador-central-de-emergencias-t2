@@ -12,6 +12,7 @@
 #include "integridade.c"
 #include "greedy.c"
 #include "dependencias.c"
+#include "otimizacao.c"
 
 #define ARQUIVO_DADOS "data/ocorrencias_911.csv"
 #define MAX_OCORRENCIAS 1000
@@ -70,7 +71,7 @@ int main(void)
         printf("2 - Consulta Rapida\n");
         printf("3 - Organizacao das Ocorrencias\n");
         printf("4 - Modo Investigacao - Analise Operacional\n");
-        printf("5 - Operacao Resgate\n");
+        printf("5 - Modo Planejamento Estrategico\n");
         printf("0 - Sair\n");
         opcao = ler_inteiro("Opcao: ");
 
@@ -92,7 +93,7 @@ int main(void)
         }
         else if (opcao == 5)
         {
-            greedy_menu(&tabela, &indices);
+            otimizacao_menu(&tabela, &indices);
         }
         else if (opcao != 0)
         {
