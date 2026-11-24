@@ -4,7 +4,7 @@ Trabalho 2 de Algoritmos e Estruturas de Dados II (UFPel).
 
 O projeto amplia o sistema desenvolvido no Trabalho 1, incorporando planejamento de dependências entre atividades, otimização de recursos e análise da rede logística de emergências. O objetivo é apoiar simulações de planejamento operacional e distribuição de recursos por meio de grafos e programação dinâmica.
 
-**Estado do projeto:** base do T1 reutilizada; módulos 6 a 9 em planejamento. As escolhas de algoritmos, modelagens e exemplos deste documento são propostas de desenvolvimento, não resultados de implementação ou testes já realizados.
+**Estado do projeto:** base do T1 reutilizada; módulos 6 e 7 implementados e testados nesta versão parcial. O módulo 8 permanece em planejamento e o módulo 9 possui uma proposta definida, ainda não implementada.
 
 ## Integrantes
 
@@ -33,7 +33,7 @@ gcc -Iinclude src/main.c -o central
 ./central
 ```
 
-Esses comandos correspondem à versão inicial, herdada do T1, que carrega o CSV e apresenta os módulos 1 a 5. As instruções serão revisadas após a integração dos novos módulos.
+O programa carrega o CSV e mantém os módulos 1 a 5. No menu principal, a opção 4 permite acessar o Módulo 6 (dependências) e a opção 5 permite acessar o Módulo 7 (otimização).
 
 ## Fonte de dados
 
@@ -45,36 +45,45 @@ Esses comandos correspondem à versão inicial, herdada do T1, que carrega o CSV
 | Base inicial | 150 registros reutilizados do T1 |
 | Campos | Tipo, descrição, região, endereço, CEP, latitude, longitude e data/hora |
 
-O sistema mantém os identificadores (IDs) gerados no T1. Dados adicionais necessários aos novos módulos, como atividades operacionais, custos de atendimento, benefícios e conexões logísticas, deverão ter sua origem e regras de geração documentadas. Valores simulados serão identificados como tais.
+O sistema mantém os identificadores (IDs) gerados no T1. As atividades e dependências do Módulo 6 são simuladas, assim como os tempos e benefícios do Módulo 7, definidos abaixo. As conexões logísticas ainda serão modeladas.
 
 ## Módulos do Trabalho 2
 
 | Módulo | Técnica proposta | Situação |
 |---|---|---|
-| 6 – Planejamento Operacional | Ordenação topológica (Kahn) | Planejado |
-| 7 – Operação Estratégica | Programação dinâmica (Mochila 0/1) | Planejado |
+| 6 – Planejamento Operacional | Ordenação topológica (Kahn) | Implementado |
+| 7 – Operação Estratégica | Programação dinâmica (Mochila 0/1) | Implementado |
 | 8 – Rede de Emergências | Dijkstra e Prim | Planejado |
-| 9 – Laboratório de Inovação | Resumo estratégico dos atendimentos | Planejado |
+| 9 – Laboratório de Inovação | Resumo estratégico por região | Proposta definida |
 
 ### Módulo 6 – Planejamento Operacional: Dependências de Atendimento
 
 Representar atividades operacionais e suas dependências em um grafo direcionado, permitindo cadastrar dependências, identificar ciclos e apresentar uma sequência válida de execução quando possível.
 
-**Modelagem proposta:** vértices representam atividades, e uma aresta `A -> B` indica que A deve ser concluída antes de B. O grafo será representado por listas de adjacência.
+**Modelagem:** vértices representam atividades e uma aresta `A -> B` indica que A deve ser concluída antes de B. O grafo direcionado utiliza uma matriz de adjacência, com capacidade para 100 atividades. O cenário inicial simulado contém 30 atividades e 54 dependências, distribuídas em seis fases. O menu permite cadastrar atividades, cadastrar/remover dependências, listar os dados e restaurar o cenário inicial. Alterações nas dependências são mantidas em memória durante a execução.
 
-**Algoritmo proposto:** ordenação topológica de Kahn. Utiliza os graus de entrada dos vértices e uma fila de atividades sem dependências pendentes. Se nem todos os vértices forem processados, existe um ciclo.
+**Algoritmo:** ordenação topológica de Kahn. Utiliza os graus de entrada dos vértices e uma fila de atividades sem dependências pendentes. Se nem todos os vértices forem processados, existe um ciclo.
 
-**Justificativa:** permite validar o planejamento e determinar uma ordem que respeite todas as precedências, em tempo `O(V + E)`.
+**Justificativa:** permite validar o planejamento e determinar uma ordem que respeite todas as precedências, em tempo `O(V²)` nesta implementação com matriz. A matriz simplifica a consulta, inclusão e remoção de arestas.
 
-Exemplo ilustrativo: `Identificar região -> Designar equipe -> Encaminhar atendimento`. Uma dependência do último passo para o primeiro forma um ciclo e impede uma ordenação válida.
+Exemplo de teste: na opção 4 do menu principal, escolha 2 (dependências) e 6 (verificar). O cenário inicial permite ordenar as 30 atividades. Cadastre a dependência 30 -> 1 pela opção 4 do submenu e execute a verificação novamente: o sistema detecta um ciclo e lista as atividades bloqueadas. Remova a dependência pela opção 5 para restaurar a ordem válida.
 
 ### Módulo 7 – Operação Estratégica: Otimização de Recursos
 
 Selecionar um subconjunto de ocorrências que maximize o benefício total sem ultrapassar uma capacidade operacional, informando os registros selecionados e os que ficaram de fora.
 
-**Modelagem proposta:** problema da Mochila 0/1. Cada ocorrência terá um custo inteiro positivo (tempo estimado em minutos) e um benefício (pontuação de prioridade). A capacidade será o tempo total disponível. Esses atributos não existem no CSV original; as regras de simulação ainda deverão ser definidas e justificadas.
+**Modelagem:** problema da Mochila 0/1. Cada ocorrência tem custo inteiro positivo (tempo estimado em minutos) e benefício (pontuação de prioridade). O usuário informa a capacidade de 0 a 1440 minutos e pode filtrar por região. Como esses atributos não existem no CSV, são simulados a partir da classificação por categoria reaproveitada do T1:
 
-**Algoritmo proposto:** programação dinâmica. O estado `dp[i][c]` representa o maior benefício possível considerando as primeiras `i` ocorrências e a capacidade `c`. Cada ocorrência pode ser incluída uma única vez ou deixada de fora.
+| Categoria | Tempo (min) | Benefício |
+|---|---:|---:|
+| EMS | 30 | 4 |
+| Fire | 45 | 3 |
+| Traffic | 20 | 2 |
+| Outras | 15 | 1 |
+
+Os valores são parâmetros didáticos, não estimativas clínicas. O limite de capacidade controla o tamanho da tabela de programação dinâmica.
+
+**Algoritmo:** programação dinâmica bottom-up. O estado `dp[i][c]` representa o maior benefício possível considerando as primeiras `i` ocorrências e a capacidade `c`. Cada ocorrência pode ser incluída uma única vez ou deixada de fora.
 
 ```text
 Se custo[i] > c:
@@ -83,11 +92,18 @@ Caso contrário:
     dp[i][c] = max(dp[i-1][c], beneficio[i] + dp[i-1][c-custo[i]])
 ```
 
-Os casos-base com zero ocorrências ou capacidade zero têm benefício zero. A reconstrução da solução identificará os IDs selecionados.
+Os casos-base com zero ocorrências ou capacidade zero têm benefício zero. A reconstrução da solução identifica os IDs selecionados. Em empate, não inclui o item da linha atual; os candidatos são ordenados por ID antes da otimização.
 
 **Justificativa:** encontra uma solução ótima para o modelo discreto adotado, ao contrário de uma escolha exclusivamente gulosa. A tabela completa tem tempo e espaço `O(n * C)`.
 
-Exemplo ilustrativo: capacidade de 60 minutos; A (40 min, 8 pontos), B (30 min, 7 pontos) e C (30 min, 6 pontos). A solução ótima seleciona B e C, obtendo 13 pontos em 60 minutos. A fica de fora.
+Exemplo executado com a base de dados: menu principal 5, submenu 1, região `NORRISTOWN`, capacidade `60`.
+
+```text
+Selecionadas: IDs 4 e 19
+Selecionadas: 2 de 14 | Tempo usado: 60/60 min | Restante: 0 min | Beneficio maximo: 8
+```
+
+As outras 12 ocorrências candidatas são listadas como não selecionadas.
 
 O módulo destina-se a simulações e não substitui protocolos oficiais de atendimento de emergências.
 
@@ -113,51 +129,66 @@ Exemplo ilustrativo: A–B (4 km), A–C (10 km) e B–C (3 km). Dijkstra encont
 
 ### Módulo 9 – Laboratório de Inovação: Funcionalidade Complementar
 
-**Proposta:** resumo estratégico das ocorrências selecionadas pelo Módulo 7, permitindo analisar como os recursos disponíveis foram distribuídos.
+**Proposta (ainda não implementada):** resumo estratégico por região das ocorrências selecionadas pelo Módulo 7, permitindo analisar como os recursos disponíveis foram distribuídos.
 
-O relatório deverá apresentar a quantidade de ocorrências selecionadas e não selecionadas, tempo utilizado e restante, benefício total e distribuição por categoria. Os dados completos serão recuperados pelo ID das ocorrências na Tabela Hash existente.
+A funcionalidade deverá reutilizar o resultado da mochila, recuperar as ocorrências selecionadas pelo ID na Tabela Hash e agrupá-las por região. Para cada região, exibirá a quantidade de atendimentos, os minutos utilizados e os pontos de benefício, destacando a região ou regiões com mais atendimentos selecionados. Não será necessário executar um novo algoritmo de otimização.
 
-Exemplo ilustrativo: para o cenário do Módulo 7, o relatório apresentaria 2 de 3 ocorrências selecionadas, 60 minutos utilizados, 0 minutos restantes e benefício total de 13 pontos.
+Exemplo de saída prevista (não executada no Módulo 9): para o teste do Módulo 7 em NORRISTOWN, o resumo apresentaria 2 ocorrências selecionadas, 60 minutos e 8 pontos nessa região.
 
 ## Integração com o Trabalho 1
 
 Os módulos 1 a 5 permanecem disponíveis. A Tabela Hash é o armazenamento principal das ocorrências, e as Árvores B+ fornecem índices por tipo, região e data. O Algoritmo Guloso do T1 continua responsável pela ordenação de atendimentos, enquanto o Módulo 7 resolve a seleção ótima sob uma restrição de capacidade.
 
-Os novos módulos deverão reutilizar os registros e consultas existentes por meio dos IDs, evitando duplicar a base principal. A documentação detalhada das funcionalidades anteriores está no [README do T1](https://github.com/marianatica/gerenciador-central-de-emergencias).
+O Módulo 7 reutiliza os registros da Tabela Hash, o índice B+ por região e a classificação do algoritmo guloso. A consulta rápida também apresenta os dados simulados de cada ocorrência e permite filtrar por prioridade. O Módulo 6 integra o modo de investigação do T1. Os módulos 8 e 9 deverão continuar reutilizando a base existente. A documentação detalhada das funcionalidades anteriores está no [README do T1](https://github.com/marianatica/gerenciador-central-de-emergencias).
 
 ## Modos de interação
 
-| Modo | Funcionalidades previstas |
+| Modo | Funcionalidades e situação |
 |---|---|
-| Investigação – Análise Operacional | Verificação de dependências inválidas e ciclos; reutilização da investigação do T1 |
-| Planejamento Estratégico | Seleção de ocorrências sob restrições e resumo dos recursos utilizados |
-| Logística – Rede de Emergências | Consulta de caminhos mínimos, conexões e custos da infraestrutura |
-| Consulta Rápida | Reutilização das consultas do T1 e acesso aos registros utilizados pelos novos módulos |
+| Investigação – Análise Operacional | Verificação de dependências inválidas e ciclos; reutilização da investigação do T1 (implementado) |
+| Planejamento Estratégico | Seleção de ocorrências sob restrições (implementado); resumo por região (planejado) |
+| Logística – Rede de Emergências | Consulta de caminhos mínimos, conexões e custos da infraestrutura (planejado) |
+| Consulta Rápida | Reutilização das consultas do T1 e acesso aos dados do Módulo 7 (implementado) |
 
 ## Análise de complexidade
 
-Complexidades esperadas para as implementações propostas:
+Complexidades dos módulos implementados e das técnicas propostas para o Módulo 8:
 
 | Algoritmo | Tempo | Espaço auxiliar |
 |---|---|---|
-| Kahn (lista de adjacência) | `O(V + E)` | `O(V)` |
+| Kahn (matriz de adjacência) | `O(V²)` | `O(V)` |
 | Mochila 0/1 (tabela completa) | `O(n * C)` | `O(n * C)` |
-| Dijkstra (matriz de adjacência) | `O(V²)` | `O(V)` |
-| Prim (matriz de adjacência) | `O(V²)` | `O(V)` |
+| Dijkstra (matriz de adjacência; planejado) | `O(V²)` | `O(V)` |
+| Prim (matriz de adjacência; planejado) | `O(V²)` | `O(V)` |
 
 `V`: vértices; `E`: arestas; `n`: ocorrências candidatas; `C`: capacidade inteira. O espaço auxiliar não inclui a representação do grafo: listas de adjacência usam `O(V + E)` e matrizes usam `O(V²)`. A Mochila 0/1 tem custo pseudopolinomial em relação à capacidade.
 
 ## Testes e validação
 
-Testes planejados, ainda não executados para o T2:
+Testes executados nesta versão com GCC em Linux:
 
-- [ ] Módulo 6: grafo sem ciclos, grafo com ciclos e dependências inválidas.
-- [ ] Módulo 7: capacidade zero, capacidade insuficiente e seleção ótima em instâncias pequenas.
+- [x] Módulo 6: 30 vértices, 54 arestas, ordem válida, ciclo, laço, duplicata, ID inválido e vértice isolado.
+- [x] Módulo 7: capacidade zero/inválida, reconstrução e 200 comparações com força bruta; teste interativo com a região NORRISTOWN.
 - [ ] Módulo 8: caminhos mínimos, destino inalcançável, árvore geradora mínima e rede desconexa.
 - [ ] Módulo 9: conferir os totais do relatório com o resultado da otimização.
-- [ ] Verificar o funcionamento dos módulos 1 a 5 após a integração.
-- [ ] Registrar dimensões reais das redes, origem dos dados, exemplos reais de entrada e saída e resultados dos testes.
+- [ ] Revisar todos os módulos 1 a 5 após a integração final.
+- [ ] Registrar dimensões e resultados da rede logística após implementação.
+
+Para executar os testes dos módulos 6 e 7:
+
+```bash
+gcc -std=c11 -Wall -Wextra -Iinclude tests/teste_algoritmos.c -o teste_t2
+./teste_t2
+```
+
+No Windows, pode-se gerar `teste_t2.exe` e executar `.\teste_t2.exe`. A versão parcial foi compilada sem avisos no Linux; o Windows não foi testado.
+
+## Próximas etapas
+
+- Implementar Dijkstra e Prim e integrar o modo Logística.
+- Implementar o resumo por região do Módulo 9.
+- Realizar testes finais de integração e atualizar este relatório.
 
 ## Bibliotecas utilizadas
 
-A base do T1 utiliza a biblioteca padrão de C (`stdio.h`, `stdlib.h` e `string.h`). As estruturas e os algoritmos centrais do T2 serão implementados pela dupla. Bibliotecas adicionais de apoio, se utilizadas, serão documentadas e justificadas.
+A base do T1 utiliza a biblioteca padrão de C (`stdio.h`, `stdlib.h` e `string.h`). Os módulos 6 e 7 utilizam a biblioteca padrão de C para entrada/saída, alocação de memória, manipulação de strings, limites de inteiros e ordenação de candidatos por ID (`qsort`). Kahn e a mochila foram implementados diretamente em C, sem bibliotecas externas de grafos ou otimização.
