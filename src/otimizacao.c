@@ -232,9 +232,8 @@ void otimizacao_menu(TabelaHash *tabela, Indices *indices)
     while (opcao != 0)
     {
         printf("\n=== MODO PLANEJAMENTO ESTRATEGICO ===\n");
-        printf("1 - Otimizar recursos (Modulo 7)\n");
+        printf("1 - Otimizar recursos\n");
         printf("2 - Consultar dados simulados de uma ocorrencia\n");
-        printf("3 - Consultar operacao gulosa (Modulo 5)\n");
         printf("0 - Voltar\n");
         opcao = ler_inteiro("Opcao: ");
         if (opcao == 1)
@@ -244,10 +243,6 @@ void otimizacao_menu(TabelaHash *tabela, Indices *indices)
         else if (opcao == 2)
         {
             plano_consultar_dados(tabela);
-        }
-        else if (opcao == 3)
-        {
-            greedy_menu(tabela, indices);
         }
         else if (opcao != 0)
         {
