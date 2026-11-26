@@ -75,6 +75,140 @@ static void conferir_caminhos(const Rede *rede)
         }
 }
 
+static int teste_rede_raiz(int *pais, int vertice)
+{
+    while (pais[vertice] != vertice)
+        vertice = pais[vertice];
+    return vertice;
+}
+
+static int teste_rede_comparar_arestas(const void *a, const void *b)
+{
+    const ArestaRede *x = a;
+    const ArestaRede *y = b;
+    return (x->custo > y->custo) - (x->custo < y->custo);
+}
+
+// Kruskal e usado apenas como referencia independente nos testes de Prim.
+static int custo_kruskal(const Rede *rede)
+{
+    ArestaRede arestas[MAX_PONTOS_REDE * (MAX_PONTOS_REDE - 1) / 2];
+    int pais[MAX_PONTOS_REDE], n = 0, escolhidas = 0, total = 0;
+    if (rede->quantidade == 0)
+        return -1;
+    for (int u = 0; u < rede->quantidade; u++)
+    {
+        pais[u] = u;
+        for (int v = u + 1; v < rede->quantidade; v++)
+            if (rede->custos[u][v] != REDE_SEM_ARESTA)
+            {
+                ArestaRede aresta = {u, v, rede->custos[u][v]};
+                arestas[n++] = aresta;
+            }
+    }
+    qsort(arestas, n, sizeof *arestas, teste_rede_comparar_arestas);
+    for (int i = 0; i < n; i++)
+    {
+        int a = teste_rede_raiz(pais, arestas[i].origem);
+        int b = teste_rede_raiz(pais, arestas[i].destino);
+        if (a != b)
+        {
+            pais[a] = b;
+            escolhidas++;
+            total += arestas[i].custo;
+        }
+    }
+    return escolhidas == rede->quantidade - 1 ? total : -1;
+}
+
+static void conferir_arvore(const Rede *rede)
+{
+    ArvoreRede arvore;
+    memset(&arvore, 0x7f, sizeof arvore);
+    int referencia = custo_kruskal(rede);
+    int resultado = rede_prim(rede, &arvore);
+    if (referencia == -1)
+    {
+        assert(resultado == REDE_SEM_SOLUCAO);
+        assert(arvore.quantidade == 0 && arvore.custo_total == 0);
+        return;
+    }
+    assert(resultado == REDE_OK);
+    assert(arvore.quantidade == rede->quantidade - 1);
+    assert(arvore.custo_total == referencia);
+
+    int pais[MAX_PONTOS_REDE], total = 0;
+    for (int i = 0; i < rede->quantidade; i++)
+        pais[i] = i;
+    for (int i = 0; i < arvore.quantidade; i++)
+    {
+        const ArestaRede *aresta = &arvore.arestas[i];
+        assert(aresta->origem >= 0 && aresta->origem < rede->quantidade);
+        assert(aresta->destino >= 0 && aresta->destino < rede->quantidade);
+        assert(aresta->custo >= 0);
+        assert(rede->custos[aresta->origem][aresta->destino] == aresta->custo);
+        int a = teste_rede_raiz(pais, aresta->origem);
+        int b = teste_rede_raiz(pais, aresta->destino);
+        assert(a != b); // incluir esta aresta nao pode criar ciclo
+        pais[a] = b;
+        total += aresta->custo;
+    }
+    assert(total == arvore.custo_total);
+    for (int i = 0; i < rede->quantidade; i++)
+        assert(teste_rede_raiz(pais, i) == teste_rede_raiz(pais, 0));
+}
+
+static void testar_prim(void)
+{
+    Rede rede;
+    ArvoreRede arvore;
+    rede_limpar(&rede);
+    conferir_arvore(&rede); // rede vazia
+    assert(rede_adicionar(&rede, "A", 0, 0) == 0);
+    conferir_arvore(&rede); // um vertice: arvore valida sem arestas
+    assert(rede_adicionar(&rede, "B", 0, 0) == 1);
+    assert(rede_adicionar(&rede, "C", 0, 0) == 2);
+    assert(rede_ligar(&rede, 0, 1, 4));
+    assert(rede_ligar(&rede, 1, 2, 3));
+    assert(rede_ligar(&rede, 0, 2, 10));
+    conferir_arvore(&rede);
+    assert(rede_prim(&rede, &arvore) == REDE_OK && arvore.custo_total == 7);
+    assert(arvore.arestas[0].origem == 0 && arvore.arestas[0].destino == 1);
+    assert(arvore.arestas[1].origem == 1 && arvore.arestas[1].destino == 2);
+    // A quarta regiao torna a rede desconexa apos duas arestas selecionadas.
+    assert(rede_adicionar(&rede, "Isolada", 0, 0) == 3);
+    conferir_arvore(&rede);
+
+    rede_limpar(&rede);
+    for (int i = 0; i < 4; i++)
+    {
+        char nome[2] = {(char)('A' + i), '\0'};
+        assert(rede_adicionar(&rede, nome, 0, 0) == i);
+    }
+    assert(rede_ligar(&rede, 0, 1, 1));
+    assert(rede_ligar(&rede, 0, 2, 1));
+    assert(rede_ligar(&rede, 1, 3, 1));
+    assert(rede_ligar(&rede, 2, 3, 1));
+    conferir_arvore(&rede);
+    assert(rede_prim(&rede, &arvore) == REDE_OK && arvore.custo_total == 3);
+    assert(arvore.arestas[0].destino == 1 && arvore.arestas[1].destino == 2);
+    assert(arvore.arestas[2].origem == 1 && arvore.arestas[2].destino == 3);
+    // Reduzir pesos a zero continua produzindo uma arvore sem ciclos.
+    rede.custos[0][1] = rede.custos[1][0] = 0;
+    rede.custos[1][3] = rede.custos[3][1] = 0;
+    conferir_arvore(&rede);
+    assert(rede_prim(&rede, &arvore) == REDE_OK && arvore.custo_total == 1);
+
+    assert(rede_prim(NULL, &arvore) == REDE_ERRO);
+    assert(arvore.quantidade == 0 && arvore.custo_total == 0);
+    assert(rede_prim(&rede, NULL) == REDE_ERRO);
+    rede.quantidade = -1;
+    assert(rede_prim(&rede, &arvore) == REDE_ERRO);
+    rede.quantidade = MAX_PONTOS_REDE + 1;
+    assert(rede_prim(&rede, &arvore) == REDE_ERRO);
+    puts("OK: Prim em triangulo, rede vazia/desconexa, vertice unico, empates e peso zero.");
+}
+
 static void testar_validacoes(void)
 {
     Rede rede;
@@ -121,6 +255,7 @@ static void testar_validacoes(void)
     assert(rede_dijkstra(&rede, 0, MAX_PONTOS_REDE - 1, &caminho) == REDE_OK);
     assert(caminho.quantidade == MAX_PONTOS_REDE);
     assert(caminho.custo_total == (MAX_PONTOS_REDE - 1) * REDE_CUSTO_MAXIMO);
+    conferir_arvore(&rede);
     puts("OK: validacoes, peso zero e caminho de 100 vertices com pesos maximos.");
 }
 
@@ -162,8 +297,9 @@ static void testar_grafos_pequenos(void)
                     assert(rede_ligar(&rede, u, v, (int)((estado >> 8) % 101u)));
             }
         conferir_caminhos(&rede);
+        conferir_arvore(&rede);
     }
-    puts("OK: triangulo A-B-C = 7, empate, isolamento e 20 grafos versus Floyd-Warshall.");
+    puts("OK: triangulo e 20 grafos: Dijkstra versus Floyd-Warshall; Prim versus Kruskal.");
 }
 
 static void testar_inicializacao(void)
@@ -186,6 +322,7 @@ static void testar_inicializacao(void)
         assert(rede_inicializar(&rede, &tabela) == n);
         assert(contar_arestas(&rede) == esperadas[n]);
         conferir_caminhos(&rede);
+        conferir_arvore(&rede);
         hash_liberar(&tabela);
     }
 
@@ -263,6 +400,11 @@ static void testar_rede_csv(void)
     for (int i = 0; i < caminho.quantidade; i++)
         printf("%s%s", i ? " -> " : "", rede.pontos[caminho.vertices[i]].regiao);
     printf(" | %.2f km\n", caminho.custo_total / 100.0);
+    conferir_arvore(&rede);
+    ArvoreRede arvore;
+    assert(rede_prim(&rede, &arvore) == REDE_OK && arvore.quantidade == 40);
+    assert(arvore.custo_total == 71923);
+    printf("Exemplo Prim CSV: %d arestas | %.2f km\n", arvore.quantidade, arvore.custo_total / 100.0);
     hash_liberar(&tabela);
     puts("OK: CSV com 41 vertices/82 arestas; 1681 caminhos versus Floyd-Warshall.");
 }
@@ -273,6 +415,7 @@ int main(void)
     testar_grafos_pequenos();
     testar_inicializacao();
     testar_rede_csv();
+    testar_prim();
     puts("Todos os testes da rede passaram.");
     return 0;
 }

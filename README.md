@@ -4,7 +4,7 @@ Trabalho 2 de Algoritmos e Estruturas de Dados II (UFPel).
 
 O projeto amplia o sistema desenvolvido no Trabalho 1, incorporando planejamento de dependências entre atividades, otimização de recursos e análise da rede logística de emergências. O objetivo é apoiar simulações de planejamento operacional e distribuição de recursos por meio de grafos e programação dinâmica.
 
-**Estado do projeto:** base do T1 reutilizada; módulos 6 e 7 implementados e testados. No módulo 8, a construção da rede e Dijkstra estão implementados e testados; Prim e o acesso pelo menu ainda estão pendentes. O módulo 9 possui uma proposta definida, ainda não implementada.
+**Estado do projeto:** base do T1 reutilizada; módulos 6 e 7 implementados e testados. No módulo 8, a construção da rede, Dijkstra e Prim estão implementados e testados; o acesso pelo menu ainda está pendente. O módulo 9 possui uma proposta definida, ainda não implementada.
 
 ## Integrantes
 
@@ -64,7 +64,7 @@ O sistema mantém os identificadores (IDs) gerados no T1. As atividades e depend
 |---|---|---|
 | 6 – Planejamento Operacional | Ordenação topológica (Kahn) | Implementado |
 | 7 – Operação Estratégica | Programação dinâmica (Mochila 0/1) | Implementado |
-| 8 – Rede de Emergências | Dijkstra e Prim | Rede e Dijkstra implementados; Prim e menu pendentes |
+| 8 – Rede de Emergências | Dijkstra e Prim | Rede e algoritmos implementados; menu pendente |
 | 9 – Laboratório de Inovação | Resumo estratégico por região | Proposta definida |
 
 ### Módulo 6 – Planejamento Operacional: Dependências de Atendimento
@@ -134,7 +134,7 @@ Na matriz, `-1` representa ausência de conexão, inclusive na diagonal; zero é
 
 **Integração:** a rede será inicializada a partir da Hash após carregar o CSV e permanecerá como cenário da sessão, sem modificar ocorrências, índices ou IDs do T1. Cadastro, alteração e remoção de ocorrências durante a sessão não reconstruirão automaticamente esse cenário. O módulo 8 usará `include/rede.h` e `src/rede.c`; a implementação será incluída uma única vez em `main.c`. O acesso pelo modo Logística será integrado na T06.
 
-O cabeçalho `rede.h` define `Rede`, `PontoRede`, `CaminhoRede`, `ArestaRede`, `ArvoreRede` e os contratos de construção, Dijkstra, Prim e menu. A construção e Dijkstra estão implementados em `src/rede.c` e são exercitados por `tests/teste_rede.c`. **Prim e o menu ainda não estão implementados.** Nesta etapa, o programa principal mantém os menus existentes; os testes incluem `rede.c` diretamente até a integração da T06.
+O cabeçalho `rede.h` define `Rede`, `PontoRede`, `CaminhoRede`, `ArestaRede`, `ArvoreRede` e os contratos de construção, Dijkstra, Prim e menu. A construção, Dijkstra e Prim estão implementados em `src/rede.c` e são exercitados por `tests/teste_rede.c`. **O menu ainda não está implementado.** Nesta etapa, o programa principal mantém os menus existentes; os testes incluem `rede.c` diretamente até a integração da T06.
 
 Em empate, os algoritmos deverão escolher o menor índice ao selecionar o próximo vértice e atualizar o predecessor somente quando houver melhoria estrita de custo, tornando os resultados reproduzíveis.
 
@@ -156,9 +156,13 @@ O valor é o custo mínimo na topologia didática de anel e conexões adicionais
 
 #### Árvore geradora mínima – Prim
 
-Determina as conexões necessárias para interligar toda a rede com o menor custo total, sem ciclos. A consulta deverá apresentar as arestas selecionadas e o custo total, ou identificar que a rede é desconexa.
+Implementado em `rede_prim`: determina as conexões necessárias para interligar toda a rede com o menor custo total, sem ciclos. Preenche `ArvoreRede` com as arestas selecionadas e o custo total. Retorna `REDE_OK` em sucesso, `REDE_SEM_SOLUCAO` para rede vazia ou desconexa e `REDE_ERRO` para argumentos inválidos. Um único vértice tem árvore válida com zero arestas e custo zero. O resultado fica vazio em falha, descartando qualquer árvore parcial.
+
+O algoritmo começa no índice 0 e mantém, para cada vértice ainda fora da árvore, a aresta de menor custo que o liga à parte já construída. A cada passo, inclui o vértice com a conexão mais barata. Em empate, escolhe o menor índice e preserva o predecessor anterior quando não há melhoria estrita. Diferentemente de Dijkstra, compara o custo de uma aresta com a árvore, sem somar o custo de um percurso a partir da origem.
 
 **Justificativa:** Prim permite reutilizar a mesma representação de grafo de Dijkstra e possui tempo `O(V²)` com matriz de adjacência.
+
+Na rede simulada de **41 vértices e 82 arestas**, Prim selecionou **40 arestas**, com custo total de **719,23 km**. Os testes conferem o custo com Kruskal e verificam que todas as regiões estão conectadas, nenhuma aresta cria ciclo e a soma dos pesos corresponde ao total informado. O valor representa a soma das conexões da árvore na topologia didática, sem interpretação de rota rodoviária real. A exibição no modo Logística será integrada na T06.
 
 Exemplo ilustrativo: A–B (4 km), A–C (10 km) e B–C (3 km). Dijkstra encontra A–B–C como caminho mínimo de A até C (7 km); Prim seleciona A–B e B–C para conectar todos os vértices (7 km).
 
@@ -182,7 +186,7 @@ O Módulo 7 reutiliza os registros da Tabela Hash, o índice B+ por região e a 
 |---|---|
 | Investigação – Análise Operacional | Integridade dos registros na opção 4; dependências e ciclos na opção 6. As duas funcionalidades estão implementadas, com acessos separados. |
 | Planejamento Estratégico | Seleção de ocorrências sob restrições (implementado); resumo por região (planejado) |
-| Logística – Rede de Emergências | Construção da rede e caminhos mínimos implementados e testados; Prim e acesso pelo menu pendentes |
+| Logística – Rede de Emergências | Construção da rede, Dijkstra e Prim implementados e testados; acesso pelo menu pendente |
 | Consulta Rápida | Reutilização das consultas do T1 e acesso aos dados do Módulo 7 (implementado) |
 
 ## Análise de complexidade
@@ -194,7 +198,7 @@ Complexidades dos módulos implementados e das técnicas propostas para o Módul
 | Kahn (matriz de adjacência) | `O(V²)` | `O(V)` |
 | Mochila 0/1 (tabela completa) | `O(n * C)` | `O(n * C)` |
 | Dijkstra (matriz de adjacência) | `O(V²)` | `O(V)` |
-| Prim (matriz de adjacência; planejado) | `O(V²)` | `O(V)` |
+| Prim (matriz de adjacência) | `O(V²)` | `O(V)` |
 
 `V`: vértices; `E`: arestas; `n`: ocorrências candidatas; `C`: capacidade inteira. O espaço auxiliar não inclui a representação do grafo: listas de adjacência usam `O(V + E)` e matrizes usam `O(V²)`. A Mochila 0/1 tem custo pseudopolinomial em relação à capacidade.
 
@@ -207,7 +211,8 @@ Validação local executada em **26/11/2026**, no **Windows com GCC 15.2.0**, se
 - [x] CSV com 150 registros, consulta pelo índice regional e seleção dos IDs 4 e 19 para NORRISTOWN, com 60 minutos e 8 pontos.
 - [x] Abertura e retorno dos sete menus; ordem inicial, inclusão de ciclo e remoção da dependência pelo menu do Módulo 6.
 - [x] Módulo 8: construção da rede, caminhos mínimos e destino inalcançável (T03).
-- [ ] Módulo 8: árvore geradora mínima e rede desconexa (T04); integração pelo menu (T06).
+- [x] Módulo 8: árvore geradora mínima e rede desconexa (T04).
+- [ ] Módulo 8: integração pelo menu (T06).
 - [ ] Módulo 9: conferir os totais do relatório com o resultado da otimização.
 - [ ] Revisar todos os módulos 1 a 5 após a integração final.
 - [ ] Registrar dimensões e resultados da rede logística após implementação.
@@ -249,9 +254,19 @@ Validação da T03 no Windows com GCC 15.2.0, sem avisos:
 
 O executável deve terminar com `Todos os testes da rede passaram.`. Floyd-Warshall é exclusivo da validação; Dijkstra continua sendo o algoritmo de caminhos mínimos da implementação. A construção da rede tem custo `O(N * V + V² + V log V)`, incluindo agrupamento linear, ordenação dos nomes e inicialização da matriz; `N` é o número de ocorrências. Usa `O(V)` de espaço auxiliar além da própria matriz.
 
+Validação da T04 no mesmo executável e ambiente:
+
+- [x] Prim: triângulo de custo conhecido, rede vazia, vértice único, região isolada, empates, pesos zero e argumentos inválidos.
+- [x] Resultado vazio quando a rede é desconexa, mesmo após selecionar conexões de uma componente.
+- [x] Comparação de custo com Kruskal em 20 grafos pequenos, nas redes de 0 a 5 regiões, em um caminho de 100 vértices com pesos máximos e na rede do CSV.
+- [x] Verificação de `V - 1` arestas, existência e custo das conexões, ausência de ciclos e conectividade de todos os vértices.
+- [x] Rede do CSV: 40 arestas, total de 71923 centésimos de km (719,23 km).
+
+Kruskal é usado apenas nos testes como referência independente; Prim é a implementação de árvore geradora mínima do módulo 8. A suíte de Dijkstra e os testes dos módulos 6 e 7 também foram executados novamente com sucesso.
+
 ## Próximas etapas
 
-- Implementar Prim e integrar o modo Logística.
+- Integrar Dijkstra e Prim ao modo Logística.
 - Implementar o resumo por região do Módulo 9.
 - Realizar testes finais de integração e atualizar este relatório.
 

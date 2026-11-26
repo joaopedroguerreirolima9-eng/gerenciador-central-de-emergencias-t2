@@ -50,7 +50,7 @@ typedef struct
     int custo_total; // centesimos de km
 } ArvoreRede;
 
-// Construcao e Dijkstra implementados na T03; Prim previsto na T04.
+// Construcao e Dijkstra implementados na T03; Prim implementado na T04.
 
 // Rede vazia; toda a matriz recebe REDE_SEM_ARESTA.
 void rede_limpar(Rede *rede);
@@ -81,6 +81,7 @@ int rede_dijkstra(const Rede *rede, int origem, int destino, CaminhoRede *caminh
 // Parte do indice 0. Retornos: REDE_OK, REDE_SEM_SOLUCAO (vazia/desconexa)
 // ou REDE_ERRO (argumentos invalidos). Resultado vazio em falha;
 // rede com um vertice tem arvore valida com zero arestas e custo zero.
+// Recebe rede construida pelas funcoes acima; usa o mesmo desempate de Dijkstra.
 int rede_prim(const Rede *rede, ArvoreRede *arvore);
 
 // IDs exibidos ao usuario comecam em 1; converte para indice antes da consulta.

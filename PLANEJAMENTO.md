@@ -38,7 +38,7 @@ A avaliação combina código (80%) e apresentação (20%) por média harmônica
 | Módulos 1 a 5 | CSV, Hash, B+, cadastro, consultas, integridade e guloso presentes. | Testar regressão após integrar os novos módulos. |
 | Módulo 6 | `dependencias.c/.h`: matriz direcionada, Kahn, cadastro/remoção de dependências, cenário de 30 atividades e 54 arestas. | Validar ordem e ciclos; alinhar documentação e acesso ao modo Investigação. |
 | Módulo 7 | `otimizacao.c/.h`: mochila 0/1, reconstrução, filtro por região e parâmetros simulados. | Validar resultado e fornecer seleção ao módulo 9. |
-| Módulo 8 | Construção da rede e Dijkstra implementados em `src/rede.c` e validados na T03. | Implementar Prim na T04; integrar os menus na T06. |
+| Módulo 8 | Construção da rede, Dijkstra e Prim implementados em `src/rede.c` e validados nas T03/T04. | Integrar os menus na T06. |
 | Módulo 9 | Resumo regional proposto no README; implementação ausente. | Reutilizar o resultado da mochila e agrupar por região. |
 | Testes | O arquivo citado não existia na versão remota analisada. Na T01 foi adicionado localmente `tests/teste_algoritmos.c`, executado com sucesso no Windows. | Expandir a validação para os módulos 8 e 9 e repetir a regressão na T07. |
 | Documentação | O roteiro de menus foi corrigido no README local durante a T01. | Manter as opções 6 e 7 para os módulos novos; atualizar novamente ao integrar a Logística. |
@@ -129,8 +129,8 @@ A distribuição abaixo é uma proposta operacional. Quem implementa apresenta o
 - [x] **T01 — Preparar e validar a base local.** Concluída em 26/11/2026.
 - [x] **T02 — Fechar a modelagem e a interface da rede.** Concluída em 26/11/2026.
 - [x] **T03 — Implementar a rede e Dijkstra.** Concluída em 26/11/2026.
-- [ ] **T04 — Implementar Prim.** Próxima tarefa.
-- [ ] **T05 — Implementar o resumo regional.**
+- [x] **T04 — Implementar Prim.** Concluída em 26/11/2026.
+- [ ] **T05 — Implementar o resumo regional.** Próxima tarefa; responsável sugerido: João.
 - [ ] **T06 — Integrar modos e menus.**
 - [ ] **T07 — Executar a validação final e a regressão.**
 - [ ] **T08 — Finalizar documentação, entrega e ensaio.**
@@ -247,13 +247,24 @@ docs: registra testes e exemplos finais do T2
 - Projeto aberto no VS Code com `src/rede.c` selecionado, conforme solicitado por Mariana.
 - Próxima ação: T04, implementar e testar Prim sobre a mesma rede, incluindo o caso desconexo.
 
+### T04 concluída em 26 de novembro
+
+- Implementado `rede_prim` em `src/rede.c`, sobre a matriz não direcionada e os custos definidos na T02. Inicia no índice 0, seleciona a conexão de menor custo e usa desempate determinístico. Tempo `O(V²)` e espaço auxiliar `O(V)`.
+- A árvore é acumulada em um resultado temporário. Só é publicada após conectar todos os vértices; rede vazia/desconexa retorna sem solução e deixa a saída vazia. Vértice único produz árvore válida com zero arestas.
+- Testes ampliados em `tests/teste_rede.c`: triângulo, empates, custo zero, região isolada, rede vazia, vértice único e argumentos inválidos. Também conferidos os casos de 0 a 5 regiões e caminho de 100 vértices com pesos máximos.
+- Comparação independente com Kruskal em 20 grafos pequenos e na rede do CSV. Os testes validam custo, `V - 1` arestas, existência das conexões, ausência de ciclos e conectividade.
+- Resultado da amostra: 41 regiões, 82 arestas disponíveis; árvore mínima com 40 arestas e custo total 71923 centésimos de km (719,23 km).
+- Compilação e testes no Windows com GCC e `-std=c11 -Wall -Wextra -Werror`; rede, Dijkstra e módulos 6/7 validados. README e contrato atualizados. O acesso pelo menu permanece para a T06.
+- Próxima ação: T05, resumo regional do módulo 9. João permanece como responsável sugerido no planejamento; evitar alterações concorrentes em `otimizacao.c/.h` sem alinhamento entre a dupla.
+
 ## Registro em Git
 
 - T01: commit `7b0ab7b`, `chore: adiciona validacao reproduzivel dos modulos 6 e 7`, na branch `chore/validacao-inicial`.
 - T02: branch `feat/modelagem-rede`, criada a partir da T01 para manter os testes disponíveis; commit com a mensagem `feat: define modelagem e contrato da rede logistica`.
 - T03: branch `feat/dijkstra`, criada a partir de `feat/modelagem-rede`, com construção da rede, Dijkstra e testes específicos.
+- T04: branch `feat/prim`, criada a partir de `feat/dijkstra`, com Prim e validação independente por Kruskal.
 - Este planejamento passa a ser versionado na raiz do repositório. Manter aqui os checks e o histórico das próximas tarefas.
-- Os registros de execução descrevem o estado ao concluir cada etapa. As branches da T01 e T02 já foram enviadas ao GitHub; a T03 segue o mesmo fluxo de commit e push. Nenhuma dessas etapas foi integrada à `main`.
+- Os registros de execução descrevem o estado ao concluir cada etapa. T01, T02 e T03 foram enviadas ao GitHub; a T04 segue o mesmo fluxo de commit e push. A T01 foi integrada à `main` remota pelo PR #8 (merge `4747f1a`), conferido ao iniciar a T04. T02, T03 e T04 permanecem nas branches de desenvolvimento nesta conferência.
 
 ## Referências verificáveis
 
