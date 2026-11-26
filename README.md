@@ -64,7 +64,7 @@ O sistema mantém os identificadores (IDs) gerados no T1. As atividades e depend
 |---|---|---|
 | 6 – Planejamento Operacional | Ordenação topológica (Kahn) | Implementado |
 | 7 – Operação Estratégica | Programação dinâmica (Mochila 0/1) | Implementado |
-| 8 – Rede de Emergências | Dijkstra e Prim | Planejado |
+| 8 – Rede de Emergências | Dijkstra e Prim | Modelagem e contrato definidos; implementação pendente |
 | 9 – Laboratório de Inovação | Resumo estratégico por região | Proposta definida |
 
 ### Módulo 6 – Planejamento Operacional: Dependências de Atendimento
@@ -122,7 +122,21 @@ O módulo destina-se a simulações e não substitui protocolos oficiais de aten
 
 O enunciado exige duas entre três técnicas: caminhos mínimos, árvore geradora mínima e fluxo máximo. A proposta é implementar as duas primeiras.
 
-**Modelagem proposta:** grafo não direcionado e ponderado, representado por matriz de adjacência. Os vértices representarão elementos da infraestrutura (regiões, bases ou pontos de apoio), e as arestas representarão conexões com custos não negativos. A origem dos pesos e das conexões deverá ser documentada. Pretende-se utilizar pelo menos 30 vértices e 50 arestas, quando compatível com a modelagem, conforme a recomendação do enunciado.
+**Modelagem definida na T02 (implementação pendente):** grafo não direcionado e ponderado, representado por matriz de adjacência, com uma região por vértice. A amostra atual contém **150 ocorrências e 41 regiões distintas**. Serão utilizadas todas as 41 regiões, com limite de 100 vértices, reutilizando os registros já carregados na Tabela Hash do T1.
+
+Cada região será posicionada pela média aritmética das latitudes e longitudes de suas ocorrências. Esse ponto representa a amostra de chamados, sem identificar uma base ou hospital. Os nomes serão preservados como no CSV e ordenados por `strcmp`, fixando os índices internos de 0 a 40; no menu, os IDs serão de 1 a 41. O carregamento atual não contém regiões vazias nem coordenadas inválidas. A inicialização deverá informar erro nesses casos ou se houver mais de 100 regiões, sem descartar registros silenciosamente.
+
+**Conexões simuladas:** para cada índice `i`, ligar a região aos índices `(i + 1) % V` e `(i + 2) % V`, nos dois sentidos. Não incluir laços nem contar duplicatas. Para as 41 regiões atuais, a regra produz **82 arestas não direcionadas**. As conexões com o sucessor formam um anel que garante conectividade; as demais oferecem caminhos alternativos. Com menos de cinco regiões, eliminar repetições; uma região isolada tem zero arestas. A ordem alfabética define um cenário didático reproduzível e não representa proximidade geográfica ou vias reais.
+
+**Pesos:** reutilizar `distancia_km` do módulo guloso do T1 entre os pontos médios regionais. A fórmula existente é `111 * abs(latA - latB) + 85 * abs(lngA - lngB)`. Converter a aproximação em km para centésimos de km com `custo = (int)(distancia * 100 + 0.5)` e exibir `custo / 100.0` em km. Não há estimativa de tempo de viagem. As coordenadas vêm do dataset; as conexões e sua interpretação logística são simuladas.
+
+Na matriz, `-1` representa ausência de conexão, inclusive na diagonal; zero é um peso permitido. Rejeitar pesos negativos, laços e arestas duplicadas. O limite por aresta será `(INT_MAX - 1) / MAX_PONTOS_REDE`, reservando `INT_MAX` para infinito e permitindo acumular os custos de caminhos simples e árvores sem estouro. Uma conexão A–B conta como uma aresta, embora ocupe as posições `[A][B]` e `[B][A]` da matriz.
+
+**Integração:** a rede será inicializada a partir da Hash após carregar o CSV e permanecerá como cenário da sessão, sem modificar ocorrências, índices ou IDs do T1. Cadastro, alteração e remoção de ocorrências durante a sessão não reconstruirão automaticamente esse cenário. O módulo 8 usará `include/rede.h` e `src/rede.c`; a implementação será incluída uma única vez em `main.c`. O acesso pelo modo Logística será integrado na T06.
+
+O cabeçalho `rede.h` já define `Rede`, `PontoRede`, `CaminhoRede`, `ArestaRede`, `ArvoreRede` e os contratos de construção, Dijkstra, Prim e menu. **As funções ainda não estão implementadas nesta etapa.** O cenário de 41 vértices e 82 arestas foi conferido a partir do CSV durante a modelagem; as saídas dos algoritmos serão verificadas depois da implementação.
+
+Em empate, os algoritmos deverão escolher o menor índice ao selecionar o próximo vértice e atualizar o predecessor somente quando houver melhoria estrita de custo, tornando os resultados reproduzíveis.
 
 #### Caminhos mínimos – Dijkstra
 
