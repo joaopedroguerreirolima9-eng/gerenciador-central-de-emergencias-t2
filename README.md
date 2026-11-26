@@ -33,7 +33,18 @@ gcc -Iinclude src/main.c -o central
 ./central
 ```
 
-O programa carrega o CSV e mantém os módulos 1 a 5. No menu principal, a opção 4 permite acessar o Módulo 6 (dependências) e a opção 5 permite acessar o Módulo 7 (otimização).
+O programa carrega o CSV e mantém os módulos 1 a 5. No menu principal, a opção 6 permite acessar o Módulo 6 (dependências) e a opção 7 permite acessar o Módulo 7 (otimização).
+
+| Opção | Funcionalidade |
+|---|---|
+| 1 | Central de Ocorrências |
+| 2 | Consulta Rápida |
+| 3 | Organização das Ocorrências |
+| 4 | Investigação de integridade dos registros (T1) |
+| 5 | Operação Resgate com algoritmo guloso (T1) |
+| 6 | Planejamento Operacional: dependências (T2) |
+| 7 | Planejamento Estratégico: otimização (T2) |
+| 0 | Sair |
 
 ## Fonte de dados
 
@@ -66,7 +77,7 @@ Representar atividades operacionais e suas dependências em um grafo direcionado
 
 **Justificativa:** permite validar o planejamento e determinar uma ordem que respeite todas as precedências, em tempo `O(V²)` nesta implementação com matriz. A matriz simplifica a consulta, inclusão e remoção de arestas.
 
-Exemplo de teste: na opção 4 do menu principal, escolha 2 (dependências) e 6 (verificar). O cenário inicial permite ordenar as 30 atividades. Cadastre a dependência 30 -> 1 pela opção 4 do submenu e execute a verificação novamente: o sistema detecta um ciclo e lista as atividades bloqueadas. Remova a dependência pela opção 5 para restaurar a ordem válida.
+Exemplo de teste: na opção 6 do menu principal, escolha 6 (verificar ciclos e ordem topológica). O cenário inicial permite ordenar as 30 atividades. Cadastre a dependência 30 -> 1 pela opção 4 do submenu e execute a verificação novamente: o sistema detecta um ciclo e lista as atividades bloqueadas. Remova a dependência pela opção 5 para restaurar a ordem válida.
 
 ### Módulo 7 – Operação Estratégica: Otimização de Recursos
 
@@ -96,7 +107,7 @@ Os casos-base com zero ocorrências ou capacidade zero têm benefício zero. A r
 
 **Justificativa:** encontra uma solução ótima para o modelo discreto adotado, ao contrário de uma escolha exclusivamente gulosa. A tabela completa tem tempo e espaço `O(n * C)`.
 
-Exemplo executado com a base de dados: menu principal 5, submenu 1, região `NORRISTOWN`, capacidade `60`.
+Exemplo executado com a base de dados: menu principal 7, submenu 1, região `NORRISTOWN`, capacidade `60`.
 
 ```text
 Selecionadas: IDs 4 e 19
@@ -139,13 +150,13 @@ Exemplo de saída prevista (não executada no Módulo 9): para o teste do Módul
 
 Os módulos 1 a 5 permanecem disponíveis. A Tabela Hash é o armazenamento principal das ocorrências, e as Árvores B+ fornecem índices por tipo, região e data. O Algoritmo Guloso do T1 continua responsável pela ordenação de atendimentos, enquanto o Módulo 7 resolve a seleção ótima sob uma restrição de capacidade.
 
-O Módulo 7 reutiliza os registros da Tabela Hash, o índice B+ por região e a classificação do algoritmo guloso. A consulta rápida também apresenta os dados simulados de cada ocorrência e permite filtrar por prioridade. O Módulo 6 integra o modo de investigação do T1. Os módulos 8 e 9 deverão continuar reutilizando a base existente. A documentação detalhada das funcionalidades anteriores está no [README do T1](https://github.com/marianatica/gerenciador-central-de-emergencias).
+O Módulo 7 reutiliza os registros da Tabela Hash, o índice B+ por região e a classificação do algoritmo guloso. A consulta rápida também apresenta os dados simulados de cada ocorrência e permite filtrar por prioridade. Nesta versão, a investigação de integridade do T1 permanece na opção 4; a investigação das dependências e dos ciclos do Módulo 6 está disponível separadamente na opção 6. Os módulos 8 e 9 deverão continuar reutilizando a base existente. A documentação detalhada das funcionalidades anteriores está no [README do T1](https://github.com/marianatica/gerenciador-central-de-emergencias).
 
 ## Modos de interação
 
 | Modo | Funcionalidades e situação |
 |---|---|
-| Investigação – Análise Operacional | Verificação de dependências inválidas e ciclos; reutilização da investigação do T1 (implementado) |
+| Investigação – Análise Operacional | Integridade dos registros na opção 4; dependências e ciclos na opção 6. As duas funcionalidades estão implementadas, com acessos separados. |
 | Planejamento Estratégico | Seleção de ocorrências sob restrições (implementado); resumo por região (planejado) |
 | Logística – Rede de Emergências | Consulta de caminhos mínimos, conexões e custos da infraestrutura (planejado) |
 | Consulta Rápida | Reutilização das consultas do T1 e acesso aos dados do Módulo 7 (implementado) |
@@ -165,23 +176,36 @@ Complexidades dos módulos implementados e das técnicas propostas para o Módul
 
 ## Testes e validação
 
-Testes executados nesta versão com GCC em Linux:
+Validação local executada em **26/11/2026**, no **Windows com GCC 15.2.0**, sem avisos na compilação com `-std=c11 -Wall -Wextra`. O arquivo `tests/teste_algoritmos.c` cobre os algoritmos e a integração com o CSV; os menus foram verificados separadamente por entradas de terminal. Resultados:
 
 - [x] Módulo 6: 30 vértices, 54 arestas, ordem válida, ciclo, laço, duplicata, ID inválido e vértice isolado.
 - [x] Módulo 7: capacidade zero/inválida, reconstrução e 200 comparações com força bruta; teste interativo com a região NORRISTOWN.
+- [x] CSV com 150 registros, consulta pelo índice regional e seleção dos IDs 4 e 19 para NORRISTOWN, com 60 minutos e 8 pontos.
+- [x] Abertura e retorno dos sete menus; ordem inicial, inclusão de ciclo e remoção da dependência pelo menu do Módulo 6.
 - [ ] Módulo 8: caminhos mínimos, destino inalcançável, árvore geradora mínima e rede desconexa.
 - [ ] Módulo 9: conferir os totais do relatório com o resultado da otimização.
 - [ ] Revisar todos os módulos 1 a 5 após a integração final.
 - [ ] Registrar dimensões e resultados da rede logística após implementação.
 
-Para executar os testes dos módulos 6 e 7:
+Os testes de Kahn conferem a precedência de todas as arestas na ordem gerada. Os testes da mochila usam enumeração de subconjuntos como referência independente e conferem o custo e o benefício da seleção reconstruída. Os 200 casos usam semente fixa para reprodução.
+
+Para executar os testes dos módulos 6 e 7, a partir da raiz do projeto:
+
+**Windows (PowerShell):**
+
+```powershell
+gcc -std=c11 -Wall -Wextra -Iinclude tests/teste_algoritmos.c -o teste_t2.exe
+.\teste_t2.exe
+```
+
+**Linux / macOS:**
 
 ```bash
 gcc -std=c11 -Wall -Wextra -Iinclude tests/teste_algoritmos.c -o teste_t2
 ./teste_t2
 ```
 
-No Windows, pode-se gerar `teste_t2.exe` e executar `.\teste_t2.exe`. A versão parcial foi compilada sem avisos no Linux; o Windows não foi testado.
+O executável deve terminar com `Todos os testes passaram.`. As verificações usam `assert`; compile sem `-DNDEBUG`. O teste reutiliza a unidade de compilação de `src/main.c`, renomeando sua função de entrada para executar os algoritmos sem iniciar os menus. O comando Linux/macOS não foi executado nesta validação local.
 
 ## Próximas etapas
 
