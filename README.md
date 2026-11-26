@@ -4,7 +4,7 @@ Trabalho 2 de Algoritmos e Estruturas de Dados II (UFPel).
 
 O projeto amplia o sistema desenvolvido no Trabalho 1, incorporando planejamento de dependências entre atividades, otimização de recursos e análise da rede logística de emergências. O objetivo é apoiar simulações de planejamento operacional e distribuição de recursos por meio de grafos e programação dinâmica.
 
-**Estado do projeto:** base do T1 reutilizada; módulos 6 e 7 implementados e testados. No módulo 8, a construção da rede, Dijkstra e Prim estão implementados e testados; o acesso pelo menu ainda está pendente. O módulo 9 possui uma proposta definida, ainda não implementada.
+**Estado do projeto:** base do T1 reutilizada; módulos 6 e 7 implementados e testados. No módulo 8, a construção da rede, Dijkstra e Prim estão implementados e testados; o acesso pelo menu ainda está pendente. O módulo 9 está implementado e exibe o resumo regional após a otimização do módulo 7.
 
 ## Integrantes
 
@@ -65,7 +65,7 @@ O sistema mantém os identificadores (IDs) gerados no T1. As atividades e depend
 | 6 – Planejamento Operacional | Ordenação topológica (Kahn) | Implementado |
 | 7 – Operação Estratégica | Programação dinâmica (Mochila 0/1) | Implementado |
 | 8 – Rede de Emergências | Dijkstra e Prim | Rede e algoritmos implementados; menu pendente |
-| 9 – Laboratório de Inovação | Resumo estratégico por região | Proposta definida |
+| 9 – Laboratório de Inovação | Resumo estratégico por região | Implementado e integrado ao módulo 7 |
 
 ### Módulo 6 – Planejamento Operacional: Dependências de Atendimento
 
@@ -168,30 +168,42 @@ Exemplo ilustrativo: A–B (4 km), A–C (10 km) e B–C (3 km). Dijkstra encont
 
 ### Módulo 9 – Laboratório de Inovação: Funcionalidade Complementar
 
-**Proposta (ainda não implementada):** resumo estratégico por região das ocorrências selecionadas pelo Módulo 7, permitindo analisar como os recursos disponíveis foram distribuídos.
+**Implementado na T05:** resumo estratégico por região das ocorrências selecionadas pelo Módulo 7. A necessidade atendida é mostrar como a seleção distribui atendimentos, tempo e benefício entre as regiões, além do total geral da mochila.
 
-A funcionalidade deverá reutilizar o resultado da mochila, recuperar as ocorrências selecionadas pelo ID na Tabela Hash e agrupá-las por região. Para cada região, exibirá a quantidade de atendimentos, os minutos utilizados e os pontos de benefício, destacando a região ou regiões com mais atendimentos selecionados. Não será necessário executar um novo algoritmo de otimização.
+A funcionalidade usa os mesmos vetores `itens` e `escolhido` que produziram a solução da mochila, sem executar outra otimização. Recupera a região de cada ocorrência selecionada pelo ID na Hash, agrupa os resultados e exibe quantidade de atendimentos, minutos e benefício por região, em ordem alfabética. Todas as regiões empatadas com mais atendimentos são destacadas. O custo e o benefício vêm dos itens selecionados, preservando exatamente os valores usados na otimização.
 
-Exemplo de saída prevista (não executada no Módulo 9): para o teste do Módulo 7 em NORRISTOWN, o resumo apresentaria 2 ocorrências selecionadas, 60 minutos e 8 pontos nessa região.
+O contrato está em `include/resumo.h` e a implementação em `src/resumo.c`: `resumo_calcular` constrói o resultado, `resumo_mostrar` o apresenta e `resumo_liberar` libera o vetor de regiões. O relatório é exibido imediatamente após uma otimização bem-sucedida, antes de liberar os vetores da seleção. Não guarda um resultado antigo entre consultas. Região vazia aparece como `(sem regiao)`; uma seleção vazia tem totais zero e nenhuma região líder. IDs selecionados ausentes ou dados inválidos fazem o cálculo retornar erro, sem apresentar um relatório parcial.
+
+Exemplo executado pelo terminal: menu principal **7**, opção **1**, região `NORRISTOWN`, capacidade `60`. Após os IDs 4 e 19 selecionados pela mochila, o módulo 9 exibe:
+
+```text
+=== MODULO 9: RESUMO ESTRATEGICO POR REGIAO ===
+Regiao: NORRISTOWN | Selecionadas: 2 | Tempo: 60 min | Beneficio: 8 pontos
+Total do resumo: 2 ocorrencia(s) | 60 min | 8 pontos
+Regiao(oes) com mais atendimentos (2):
+- NORRISTOWN
+```
+
+Com região em branco e capacidade 60, o teste selecionou uma ocorrência de HATFIELD TOWNSHIP e uma de NEW HANOVER, ambas destacadas com um atendimento. O total continua sendo 2 ocorrências, 60 minutos e 8 pontos. Capacidade zero gera um resumo vazio, sem reaproveitar uma seleção anterior.
 
 ## Integração com o Trabalho 1
 
 Os módulos 1 a 5 permanecem disponíveis. A Tabela Hash é o armazenamento principal das ocorrências, e as Árvores B+ fornecem índices por tipo, região e data. O Algoritmo Guloso do T1 continua responsável pela ordenação de atendimentos, enquanto o Módulo 7 resolve a seleção ótima sob uma restrição de capacidade.
 
-O Módulo 7 reutiliza os registros da Tabela Hash, o índice B+ por região e a classificação do algoritmo guloso. A consulta rápida também apresenta os dados simulados de cada ocorrência e permite filtrar por prioridade. Nesta versão, a investigação de integridade do T1 permanece na opção 4; a investigação das dependências e dos ciclos do Módulo 6 está disponível separadamente na opção 6. Os módulos 8 e 9 deverão continuar reutilizando a base existente. A documentação detalhada das funcionalidades anteriores está no [README do T1](https://github.com/marianatica/gerenciador-central-de-emergencias).
+O Módulo 7 reutiliza os registros da Tabela Hash, o índice B+ por região e a classificação do algoritmo guloso. A consulta rápida também apresenta os dados simulados de cada ocorrência e permite filtrar por prioridade. Nesta versão, a investigação de integridade do T1 permanece na opção 4; a investigação das dependências e dos ciclos do Módulo 6 está disponível separadamente na opção 6. O módulo 9 usa os IDs selecionados e a Hash para montar o resumo; o módulo 8 constrói sua rede sobre as regiões da mesma base, com acesso pelo menu ainda pendente. A documentação detalhada das funcionalidades anteriores está no [README do T1](https://github.com/marianatica/gerenciador-central-de-emergencias).
 
 ## Modos de interação
 
 | Modo | Funcionalidades e situação |
 |---|---|
 | Investigação – Análise Operacional | Integridade dos registros na opção 4; dependências e ciclos na opção 6. As duas funcionalidades estão implementadas, com acessos separados. |
-| Planejamento Estratégico | Seleção de ocorrências sob restrições (implementado); resumo por região (planejado) |
+| Planejamento Estratégico | Seleção de ocorrências sob restrições e resumo regional da mesma seleção, exibido automaticamente (implementados) |
 | Logística – Rede de Emergências | Construção da rede, Dijkstra e Prim implementados e testados; acesso pelo menu pendente |
 | Consulta Rápida | Reutilização das consultas do T1 e acesso aos dados do Módulo 7 (implementado) |
 
 ## Análise de complexidade
 
-Complexidades dos módulos implementados e das técnicas propostas para o Módulo 8:
+Complexidades dos algoritmos implementados:
 
 | Algoritmo | Tempo | Espaço auxiliar |
 |---|---|---|
@@ -199,8 +211,11 @@ Complexidades dos módulos implementados e das técnicas propostas para o Módul
 | Mochila 0/1 (tabela completa) | `O(n * C)` | `O(n * C)` |
 | Dijkstra (matriz de adjacência) | `O(V²)` | `O(V)` |
 | Prim (matriz de adjacência) | `O(V²)` | `O(V)` |
+| Resumo regional (busca linear de grupos e ordenação) | `O(n + s * r + r log r)` | `O(s)` |
 
 `V`: vértices; `E`: arestas; `n`: ocorrências candidatas; `C`: capacidade inteira. O espaço auxiliar não inclui a representação do grafo: listas de adjacência usam `O(V + E)` e matrizes usam `O(V²)`. A Mochila 0/1 tem custo pseudopolinomial em relação à capacidade.
+
+No resumo, `s` é o número de selecionadas e `r` o número de regiões dessas ocorrências. O tempo considera custo médio `O(1)` nas consultas por ID à Hash; colisões podem aumentar esse custo. O vetor reserva no máximo `s` posições, sem novo limite fixo de regiões. Nenhuma ocorrência selecionada implica resultado vazio, sem alocação do vetor.
 
 ## Testes e validação
 
@@ -213,7 +228,7 @@ Validação local executada em **26/11/2026**, no **Windows com GCC 15.2.0**, se
 - [x] Módulo 8: construção da rede, caminhos mínimos e destino inalcançável (T03).
 - [x] Módulo 8: árvore geradora mínima e rede desconexa (T04).
 - [ ] Módulo 8: integração pelo menu (T06).
-- [ ] Módulo 9: conferir os totais do relatório com o resultado da otimização.
+- [x] Módulo 9: totais regionais e gerais iguais aos da seleção da mochila, empates, região vazia e seleção vazia (T05).
 - [ ] Revisar todos os módulos 1 a 5 após a integração final.
 - [ ] Registrar dimensões e resultados da rede logística após implementação.
 
@@ -264,10 +279,27 @@ Validação da T04 no mesmo executável e ambiente:
 
 Kruskal é usado apenas nos testes como referência independente; Prim é a implementação de árvore geradora mínima do módulo 8. A suíte de Dijkstra e os testes dos módulos 6 e 7 também foram executados novamente com sucesso.
 
+Para executar os testes do módulo 9 no Windows:
+
+```powershell
+gcc -std=c11 -Wall -Wextra -Werror -Iinclude tests/teste_resumo.c -o teste_resumo.exe
+.\teste_resumo.exe
+```
+
+Validação da T05, no Windows com GCC 15.2.0, sem avisos:
+
+- [x] Quantidades, minutos e benefícios por região e no total, preservando os itens e a máscara da mochila.
+- [x] Várias regiões, todos os empates, região sem nome e seleção vazia.
+- [x] Argumentos inválidos, ID selecionado ausente, máscara inválida e proteção contra estouro na soma.
+- [x] NORRISTOWN/60 e 21 capacidades entre 0 e 300 minutos na base completa.
+- [x] Fluxo pelo menu: resumo automático, capacidade zero, seleção com várias regiões, região inexistente e duas otimizações consecutivas.
+
+O executável termina com `Todos os testes do resumo passaram.`. Os testes anteriores dos módulos 6/7 e da rede também passaram após essa integração.
+
 ## Próximas etapas
 
 - Integrar Dijkstra e Prim ao modo Logística.
-- Implementar o resumo por região do Módulo 9.
+- Revisar a organização dos modos de interação.
 - Realizar testes finais de integração e atualizar este relatório.
 
 ## Bibliotecas utilizadas
@@ -275,3 +307,5 @@ Kruskal é usado apenas nos testes como referência independente; Prim é a impl
 A base do T1 utiliza a biblioteca padrão de C (`stdio.h`, `stdlib.h` e `string.h`). Os módulos 6 e 7 utilizam a biblioteca padrão de C para entrada/saída, alocação de memória, manipulação de strings, limites de inteiros e ordenação de candidatos por ID (`qsort`). Kahn e a mochila foram implementados diretamente em C, sem bibliotecas externas de grafos ou otimização.
 
 O módulo 8 usa também `math.h` para rejeitar coordenadas não finitas com `isfinite`; não utiliza bibliotecas externas de grafos. A distância é calculada pela função do T1, sem API ou consulta de mapas.
+
+O módulo 9 usa alocação/liberação de memória, manipulação de strings e `qsort` da biblioteca padrão, além das consultas à Hash implementada no T1.

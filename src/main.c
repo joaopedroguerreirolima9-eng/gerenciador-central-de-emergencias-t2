@@ -12,6 +12,7 @@
 #include "integridade.c"
 #include "greedy.c"
 #include "dependencias.c"
+#include "resumo.c"
 #include "otimizacao.c"
 
 #define ARQUIVO_DADOS "data/ocorrencias_911.csv"

@@ -7,6 +7,7 @@
 #include "otimizacao.h"
 #include "greedy.h"
 #include "entrada.h"
+#include "resumo.h"
 
 // O CSV nao informa o tempo de atendimento. Usamos valores simulados.
 ItemPlano plano_item(const Ocorrencia *o)
@@ -155,6 +156,15 @@ static void plano_resultado(TabelaHash *tabela, ItemPlano *itens, int *escolhido
            selecionadas, n, minutos, cap, cap - minutos, beneficio);
     printf("A mochila escolhe o conjunto com mais pontos dentro do tempo disponivel.\n");
     printf("Simulacao academica; nao substitui protocolos oficiais de emergencia.\n");
+
+    ResumoPlano resumo;
+    if (resumo_calcular(tabela, itens, escolhido, n, &resumo))
+    {
+        resumo_mostrar(&resumo);
+        resumo_liberar(&resumo);
+    }
+    else
+        printf("Nao foi possivel gerar o resumo regional desta selecao.\n");
 }
 
 static void plano_executar(TabelaHash *tabela, Indices *indices)
