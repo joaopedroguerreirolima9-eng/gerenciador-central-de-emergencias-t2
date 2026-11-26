@@ -50,7 +50,7 @@ typedef struct
     int custo_total; // centesimos de km
 } ArvoreRede;
 
-// Contrato definido na T02. Implementacoes previstas nas T03 e T04.
+// Construcao e Dijkstra implementados na T03; Prim previsto na T04.
 
 // Rede vazia; toda a matriz recebe REDE_SEM_ARESTA.
 void rede_limpar(Rede *rede);
@@ -75,6 +75,7 @@ int rede_inicializar(Rede *rede, const TabelaHash *tabela);
 // Retornos: REDE_OK, REDE_SEM_SOLUCAO (sem caminho) ou REDE_ERRO
 // (argumentos invalidos). Origem igual ao destino: 1 vertice, custo zero.
 // Recebe rede construida pelas funcoes acima. Resultado vazio em falha.
+// Empate: menor indice na escolha do vertice; so atualiza em custo menor.
 int rede_dijkstra(const Rede *rede, int origem, int destino, CaminhoRede *caminho);
 
 // Parte do indice 0. Retornos: REDE_OK, REDE_SEM_SOLUCAO (vazia/desconexa)

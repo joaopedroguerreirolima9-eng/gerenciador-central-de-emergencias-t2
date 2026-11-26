@@ -38,7 +38,7 @@ A avaliação combina código (80%) e apresentação (20%) por média harmônica
 | Módulos 1 a 5 | CSV, Hash, B+, cadastro, consultas, integridade e guloso presentes. | Testar regressão após integrar os novos módulos. |
 | Módulo 6 | `dependencias.c/.h`: matriz direcionada, Kahn, cadastro/remoção de dependências, cenário de 30 atividades e 54 arestas. | Validar ordem e ciclos; alinhar documentação e acesso ao modo Investigação. |
 | Módulo 7 | `otimizacao.c/.h`: mochila 0/1, reconstrução, filtro por região e parâmetros simulados. | Validar resultado e fornecer seleção ao módulo 9. |
-| Módulo 8 | T02 definiu a rede de 41 regiões/82 arestas e criou localmente o contrato `include/rede.h`; algoritmos ainda não implementados. | Implementar construção da rede e Dijkstra na T03; Prim na T04. |
+| Módulo 8 | Construção da rede e Dijkstra implementados em `src/rede.c` e validados na T03. | Implementar Prim na T04; integrar os menus na T06. |
 | Módulo 9 | Resumo regional proposto no README; implementação ausente. | Reutilizar o resultado da mochila e agrupar por região. |
 | Testes | O arquivo citado não existia na versão remota analisada. Na T01 foi adicionado localmente `tests/teste_algoritmos.c`, executado com sucesso no Windows. | Expandir a validação para os módulos 8 e 9 e repetir a regressão na T07. |
 | Documentação | O roteiro de menus foi corrigido no README local durante a T01. | Manter as opções 6 e 7 para os módulos novos; atualizar novamente ao integrar a Logística. |
@@ -128,8 +128,8 @@ A distribuição abaixo é uma proposta operacional. Quem implementa apresenta o
 
 - [x] **T01 — Preparar e validar a base local.** Concluída em 26/11/2026.
 - [x] **T02 — Fechar a modelagem e a interface da rede.** Concluída em 26/11/2026.
-- [ ] **T03 — Implementar a rede e Dijkstra.** Próxima tarefa.
-- [ ] **T04 — Implementar Prim.**
+- [x] **T03 — Implementar a rede e Dijkstra.** Concluída em 26/11/2026.
+- [ ] **T04 — Implementar Prim.** Próxima tarefa.
 - [ ] **T05 — Implementar o resumo regional.**
 - [ ] **T06 — Integrar modos e menus.**
 - [ ] **T07 — Executar a validação final e a regressão.**
@@ -235,12 +235,25 @@ docs: registra testes e exemplos finais do T2
 - Cabeçalho compilado isoladamente e com inclusão repetida usando GCC, `-std=c11 -Wall -Wextra -Werror -fsyntax-only`, sem erros ou avisos. Verificado também que o limite acumulado dos custos fica abaixo de `INT_MAX`.
 - Próxima ação: T03, implementar `src/rede.c` com inicialização, validação e Dijkstra, e comparar resultados com casos pequenos conhecidos. Prim permanece na T04; integração dos menus na T06.
 
+### T03 concluída em 26 de novembro
+
+- Criado `src/rede.c` com limpeza da matriz, cadastro de regiões, inclusão simétrica de arestas, agrupamento da Hash, médias das coordenadas, ordenação alfabética e geração das conexões simuladas. Dados inválidos ou excesso de regiões deixam a rede vazia e retornam erro.
+- Implementado Dijkstra com pesos não negativos, desempate por menor índice, reconstrução do percurso e resultado vazio para falhas. O algoritmo informa destino inalcançável, trata origem igual ao destino e protege a soma dos custos.
+- Criado `tests/teste_rede.c`: casos pequenos conhecidos, peso zero, empate, isolamento, argumentos inválidos, redes de 0 a 5 regiões, médias regionais e preservação da base, excesso de regiões e um caminho de 100 vértices com pesos máximos.
+- Comparação independente com Floyd-Warshall em 20 grafos pequenos e nos 1.681 pares da rede do CSV; também conferidos os vértices, as arestas e a soma dos pesos do percurso reconstruído.
+- A construção em C confirmou 41 regiões e 82 arestas, com pesos de 378 a 6490 centésimos de km e ABINGTON–AMBLER = 1334. O teste ABINGTON–NORRISTOWN encontrou custo 19168 (191,68 km) na topologia simulada.
+- GCC no Windows com `-std=c11 -Wall -Wextra -Werror`: programa principal, testes dos módulos 6/7 e testes da rede compilados sem avisos; os dois executáveis de testes passaram.
+- README e contrato atualizados. A implementação permanece sem acesso pelo menu até a T06; os testes incluem `rede.c` diretamente. Prim continua pendente na T04.
+- Projeto aberto no VS Code com `src/rede.c` selecionado, conforme solicitado por Mariana.
+- Próxima ação: T04, implementar e testar Prim sobre a mesma rede, incluindo o caso desconexo.
+
 ## Registro em Git
 
 - T01: commit `7b0ab7b`, `chore: adiciona validacao reproduzivel dos modulos 6 e 7`, na branch `chore/validacao-inicial`.
 - T02: branch `feat/modelagem-rede`, criada a partir da T01 para manter os testes disponíveis; commit com a mensagem `feat: define modelagem e contrato da rede logistica`.
+- T03: branch `feat/dijkstra`, criada a partir de `feat/modelagem-rede`, com construção da rede, Dijkstra e testes específicos.
 - Este planejamento passa a ser versionado na raiz do repositório. Manter aqui os checks e o histórico das próximas tarefas.
-- Os registros de execução acima descrevem o estado ao concluir cada etapa. Os commits foram preparados posteriormente, a pedido de Mariana. Nenhum push ou PR foi realizado neste fechamento.
+- Os registros de execução descrevem o estado ao concluir cada etapa. As branches da T01 e T02 já foram enviadas ao GitHub; a T03 segue o mesmo fluxo de commit e push. Nenhuma dessas etapas foi integrada à `main`.
 
 ## Referências verificáveis
 
