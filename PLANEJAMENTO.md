@@ -94,7 +94,7 @@ O padrão predominante observado é `tipo: descricao`, com tipo em inglês e des
 
 As branches observadas incluem `feat/modulo-6`, `feat/modulo-7`, `feat/menu-principal` e `docs/status-t2`. O histórico mostra integração por pull requests com commits de merge. Isso é uma prática observada; não foi identificada uma norma formal de revisão. A `main` aparece sem proteção na consulta de branches.
 
-Sugestão para a dupla: manter `feat/<assunto>`, `fix/<assunto>` e `docs/<assunto>`, com um PR por entrega coesa e revisão pelo colega. `test:` pode ser adotado para testes, mas não apareceu entre os tipos do histórico analisado. Se o Codex criar branches, seu prefixo padrão será `codex/`.
+Sugestão para a dupla: manter `feat/<assunto>`, `fix/<assunto>` e `docs/<assunto>`, com um PR por entrega coesa e revisão pelo colega. `test:` pode ser adotado para testes, mas não apareceu entre os tipos do histórico analisado. Por orientação de Mariana, as branches devem seguir os prefixos do projeto, como `feat/`, `fix/`, `docs/` e `chore/`, sem prefixo do agente.
 
 ## Decisões para concluir
 
@@ -216,7 +216,7 @@ docs: registra testes e exemplos finais do T2
 
 ### T01 concluída em 26 de novembro
 
-- Cópia local: esta pasta do repositório, `gerenciador-central-de-emergencias-t2/`. Origem e commit conferidos com a versão analisada. Branch de trabalho: `codex/validacao-inicial`.
+- Cópia local: esta pasta do repositório, `gerenciador-central-de-emergencias-t2/`. Origem e commit conferidos com a versão analisada. Branch de trabalho: `chore/validacao-inicial`.
 - Compilação no Windows com GCC 15.2.0: `gcc -std=c11 -Wall -Wextra -Iinclude src/main.c -o central.exe`, concluída sem avisos.
 - O arquivo de testes citado não foi encontrado na `main`, nas branches dos módulos 6 e 7 nem no histórico disponível. Foi criado `tests/teste_algoritmos.c` com verificações de precedência de Kahn, ciclos, laços, IDs, vértice isolado, limites e desempate da mochila e 200 comparações determinísticas com enumeração de subconjuntos, conferindo também a reconstrução.
 - O teste de integração carregou 150 ocorrências do CSV, consultou NORRISTOWN pela B+ e validou na Hash a seleção dos IDs 4 e 19: 60 minutos e 8 pontos. O executável de testes terminou com `Todos os testes passaram.`.
@@ -237,8 +237,8 @@ docs: registra testes e exemplos finais do T2
 
 ## Registro em Git
 
-- T01: commit `7b0ab7b`, `chore: adiciona validacao reproduzivel dos modulos 6 e 7`, na branch `codex/validacao-inicial`.
-- T02: branch `codex/modelagem-rede`, criada a partir da T01 para manter os testes disponíveis; commit com a mensagem `feat: define modelagem e contrato da rede logistica`.
+- T01: commit `7b0ab7b`, `chore: adiciona validacao reproduzivel dos modulos 6 e 7`, na branch `chore/validacao-inicial`.
+- T02: branch `feat/modelagem-rede`, criada a partir da T01 para manter os testes disponíveis; commit com a mensagem `feat: define modelagem e contrato da rede logistica`.
 - Este planejamento passa a ser versionado na raiz do repositório. Manter aqui os checks e o histórico das próximas tarefas.
 - Os registros de execução acima descrevem o estado ao concluir cada etapa. Os commits foram preparados posteriormente, a pedido de Mariana. Nenhum push ou PR foi realizado neste fechamento.
 
