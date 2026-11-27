@@ -211,6 +211,8 @@ python tests/teste_menus.py
 
 Python 3 é necessário apenas para automatizar os testes de terminal, usando sua biblioteca padrão. Os testes C usam `assert`: compile sem `-DNDEBUG`. CSVs alternativos são criados em diretórios temporários, preservando a amostra versionada.
 
+**Cópia limpa conferida em 27/11/2026:** o código versionado foi exportado em ZIP e extraído em outra pasta, sem `.git` ou executáveis anteriores. O programa, as quatro suítes C, os 23 testes de terminal, o `build.bat` e a sequência de demonstração de `APRESENTACAO.md` funcionaram nessa cópia no Windows. O ensaio individual da dupla continua separado dessa validação técnica.
+
 ## Limites da versão
 
 - Alterações ficam em memória e são perdidas ao sair. O CSV inicial não é reescrito.
