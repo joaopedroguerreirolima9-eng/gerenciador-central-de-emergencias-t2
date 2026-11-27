@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+#include <string.h>
 
 #include "entrada.h"
 
@@ -77,13 +80,18 @@ int ler_inteiro(char *mensagem) {
 
     while (1) {
         ler_texto(mensagem, texto, TAM_NUMERO);
-        if (eh_inteiro(texto)) {
-            return atoi(texto);
+        if (strlen(texto) < TAM_NUMERO - 1 && eh_inteiro(texto)) {
+            char *fim;
+            errno = 0;
+            long valor = strtol(texto, &fim, 10);
+            if (errno != ERANGE && *fim == '\0' && valor >= INT_MIN && valor <= INT_MAX) {
+                return (int)valor;
+            }
         }
         if (feof(stdin)) {
             return 0; // a entrada acabou: devolve 0 (que nos menus significa "voltar")
         }
-        printf("Digite um numero inteiro.\n");
+        printf("Digite um numero inteiro entre %d e %d.\n", INT_MIN, INT_MAX);
     }
 }
 

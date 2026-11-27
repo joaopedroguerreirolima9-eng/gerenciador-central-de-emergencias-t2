@@ -95,6 +95,10 @@ static void operacao_resgate(TabelaHash *tabela, Indices *indices, int criterio)
 
     ler_texto("Regiao (ex.: NORRISTOWN; aperte so Enter para todas): ", regiao, TAM_REGIAO);
     double limite = ler_decimal("Limite de deslocamento da equipe em km (0 = sem limite): ");
+    if (limite < 0) {
+        printf("Limite invalido: use zero (sem limite) ou um valor positivo.\n");
+        return;
+    }
 
     int n = selecionar(tabela, indices, regiao, candidatos);
     if (n == 0) {

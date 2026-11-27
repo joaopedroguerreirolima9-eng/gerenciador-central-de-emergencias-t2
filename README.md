@@ -4,7 +4,7 @@ Trabalho 2 de Algoritmos e Estruturas de Dados II (UFPel).
 
 O projeto amplia o sistema desenvolvido no Trabalho 1, incorporando planejamento de dependências entre atividades, otimização de recursos e análise da rede logística de emergências. O objetivo é apoiar simulações de planejamento operacional e distribuição de recursos por meio de grafos e programação dinâmica.
 
-**Estado do projeto:** módulos 6 a 9 implementados e integrados aos modos de interação, preservando a base do T1. Investigação reúne integridade e dependências; Planejamento Estratégico inclui otimização e resumo regional; Logística permite consultar a rede, Dijkstra e Prim. A regressão final e a revisão dos entregáveis permanecem para T07/T08.
+**Estado do projeto:** módulos 6 a 9 implementados e integrados aos modos de interação, preservando a base do T1. Investigação reúne integridade e dependências; Planejamento Estratégico inclui otimização e resumo regional; Logística permite consultar a rede, Dijkstra e Prim. Regressão T07 concluída no Windows com quatro suítes C e 23 testes de terminal. A revisão dos entregáveis, a cópia limpa e o ensaio permanecem para T08.
 
 ## Integrantes
 
@@ -263,8 +263,8 @@ Validação local executada em **26/11/2026**, no **Windows com GCC 15.2.0**, se
 - [x] Módulo 8: árvore geradora mínima e rede desconexa (T04).
 - [x] Módulo 8: integração pelo menu (T06).
 - [x] Módulo 9: totais regionais e gerais iguais aos da seleção da mochila, empates, região vazia e seleção vazia (T05).
-- [ ] Revisar todos os módulos 1 a 5 após a integração final.
-- [ ] Registrar dimensões e resultados da rede logística após implementação.
+- [x] Revisar todos os módulos 1 a 5 após a integração final (T07).
+- [x] Registrar dimensões e resultados da rede logística após implementação.
 
 Os testes de Kahn conferem a precedência de todas as arestas na ordem gerada. Os testes da mochila usam enumeração de subconjuntos como referência independente e conferem o custo e o benefício da seleção reconstruída. Os 200 casos usam semente fixa para reprodução.
 
@@ -348,9 +348,31 @@ python tests/teste_menus.py
 
 Os CSVs alternativos usados nessa suíte são criados em diretórios temporários, preservando a amostra do projeto. As três suítes C também passaram novamente após a integração.
 
+Validação da T07 em **27/11/2026**, no Windows com GCC 15.2.0:
+
+- [x] Quatro suítes C compiladas com `-std=c11 -Wall -Wextra -Werror`, sem avisos: algoritmos, rede, resumo e regressão do T1.
+- [x] 160 registros com IDs na mesma posição da Hash, comparados com um modelo em vetor: inserção, duplicata, alteração dos três índices B+, remoção, reinserção, esvaziamento e reutilização.
+- [x] Buscas exatas, prefixo e faixa de datas, ordenação por chave/ID e assinaturas de integridade após alterações autorizadas e não autorizadas.
+- [x] 23 testes de terminal, incluindo cadastro → consultas nos índices → alteração → otimização/resumo → remoção → ausência nos índices.
+- [x] Cancelamentos, cadastro inválido sem consumir ID, consultas e ordenações comparadas com o CSV, prioridades, duplicatas, conflitos e comparação com arquivo.
+- [x] Ambos os critérios do guloso, com e sem limite de deslocamento; limites inválidos rejeitados.
+- [x] Arquivo ausente, linhas CSV incompatíveis, entradas numéricas fora da faixa e preservação dos dados após alteração inválida.
+
+A regressão reproduziu e corrigiu três falhas de validação: tipo vazio durante alteração, inteiros fora da faixa e limite negativo no guloso. `ler_inteiro` agora usa `strtol` com verificação de erro e limites de `int`, recusando também entrada que possa ter sido truncada. Alterar o tipo para vazio cancela a operação antes de modificar o registro, os índices ou a assinatura. Limite negativo de deslocamento não é tratado como ausência de limite.
+
+Para executar a nova suíte de regressão e a suíte ampliada de terminal:
+
+```powershell
+gcc -std=c11 -Wall -Wextra -Werror -Iinclude tests/teste_regressao.c -o teste_regressao.exe
+.\teste_regressao.exe
+gcc -std=c11 -Wall -Wextra -Werror -Iinclude src/main.c -o central.exe
+python tests/teste_menus.py
+```
+
+A suíte C termina com `Todos os testes de regressao passaram.`; a suíte de terminal informa `Ran 23 tests` e `OK`. Os comandos das outras três suítes C estão acima. Os testes com dados alternativos usam diretórios temporários. Esta validação foi executada no Windows; não representa execução em Linux/macOS.
+
 ## Próximas etapas
 
-- Executar a regressão final de cadastro, alteração, remoção, índices e demais operações do T1 (T07).
 - Revisar os entregáveis, testar uma cópia limpa e preparar a apresentação (T08).
 
 ## Bibliotecas utilizadas
