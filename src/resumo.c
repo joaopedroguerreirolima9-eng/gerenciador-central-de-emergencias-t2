@@ -1,3 +1,4 @@
+// Agrupamento por regiao em vetor; consulta das ocorrencias pela Tabela Hash.
 #include <limits.h>
 #include <stdint.h>
 #include <stdio.h>

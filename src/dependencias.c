@@ -1,6 +1,8 @@
+// Grafo direcionado em matriz: cadastro e investigacao das dependencias.
 #include <stdio.h>
 #include <string.h>
 #include "dependencias.h"
+#include "kahn.h"
 #include "entrada.h"
 
 int dependencias_adicionar(Dependencias *g, const char *nome)
@@ -59,52 +61,6 @@ void dependencias_inicializar(Dependencias *g)
     // Encerramento exige os quatro registros finais de apoio, alem das dependencias anteriores.
     for (int i = 25; i < 29; i++)
         dependencias_ligar(g, i, 29);
-}
-
-// Kahn: comeca pelas atividades que nao dependem de nenhuma outra.
-int dependencias_kahn(const Dependencias *g, int *ordem, int *grau)
-{
-    int fila[MAX_ATIVIDADES];
-    int inicio = 0;
-    int fim = 0;
-    int total = 0;
-    int n = g->quantidade;
-
-    for (int v = 0; v < n; v++)
-    {
-        grau[v] = 0;
-        for (int u = 0; u < n; u++)
-        {
-            grau[v] += g->arestas[u][v];
-        }
-        if (grau[v] == 0)
-        {
-            fila[fim] = v;
-            fim++;
-        }
-    }
-
-    while (inicio < fim)
-    {
-        int u = fila[inicio];
-        inicio++;
-        ordem[total] = u;
-        total++;
-
-        for (int v = 0; v < n; v++)
-        {
-            if (g->arestas[u][v])
-            {
-                grau[v]--;
-                if (grau[v] == 0)
-                {
-                    fila[fim] = v;
-                    fim++;
-                }
-            }
-        }
-    }
-    return total;
 }
 
 static void dep_listar(const Dependencias *g)

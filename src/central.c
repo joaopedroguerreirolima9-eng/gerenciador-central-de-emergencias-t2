@@ -131,7 +131,13 @@ static void alterar(TabelaHash *tabela, Indices *indices) {
     int campo = ler_inteiro("Opcao: ");
 
     if (campo == 1) {
-        ler_texto("Novo tipo: ", o->tipo, TAM_TIPO);
+        char tipo[TAM_TIPO];
+        ler_texto("Novo tipo: ", tipo, TAM_TIPO);
+        if (tipo[0] == '\0') {
+            printf("O tipo e obrigatorio. Alteracao cancelada.\n");
+            return;
+        }
+        strcpy(o->tipo, tipo);
     } else if (campo == 2) {
         ler_texto("Nova descricao: ", o->descricao, TAM_DESCRICAO);
     } else if (campo == 3) {

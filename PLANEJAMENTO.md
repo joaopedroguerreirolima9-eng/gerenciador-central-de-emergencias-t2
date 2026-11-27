@@ -35,12 +35,12 @@ A avaliação combina código (80%) e apresentação (20%) por média harmônica
 
 | Parte | Evidência nos arquivos | Próxima ação |
 |---|---|---|
-| Módulos 1 a 5 | CSV, Hash, B+, cadastro, consultas, integridade e guloso presentes. | Testar regressão após integrar os novos módulos. |
+| Módulos 1 a 5 | Regressão concluída na T07: CSV, Hash, B+, cadastro/alteração/remoção, consultas, integridade e guloso. | Conferir a cópia limpa na T08. |
 | Módulo 6 | `dependencias.c/.h`: matriz direcionada, Kahn, cadastro/remoção de dependências, cenário de 30 atividades e 54 arestas. | Validar ordem e ciclos; alinhar documentação e acesso ao modo Investigação. |
 | Módulo 7 | `otimizacao.c/.h`: mochila 0/1, reconstrução, filtro por região e parâmetros simulados. | Validar resultado e fornecer seleção ao módulo 9. |
-| Módulo 8 | Construção da rede, Dijkstra e Prim integrados ao modo Logística na T06. | Repetir a validação na versão final da T07. |
-| Módulo 9 | Resumo integrado à otimização e conferido nos testes de menus da T06. | Repetir a regressão na T07. |
-| Testes | O arquivo citado não existia na versão remota analisada. Na T01 foi adicionado localmente `tests/teste_algoritmos.c`, executado com sucesso no Windows. | Expandir a validação para os módulos 8 e 9 e repetir a regressão na T07. |
+| Módulo 8 | Grafo, Dijkstra e Prim separados por técnica e integrados à Logística; testes aprovados na T07. | Conferir a execução na cópia limpa da T08. |
+| Módulo 9 | Resumo integrado à otimização e validado novamente na T07, incluindo alteração e remoção de candidatas. | Preparar a demonstração na T08. |
+| Testes | Quatro suítes C e 23 testes de terminal executados com sucesso no Windows. | Reproduzir a partir de cópia limpa e revisar os comandos na T08. |
 | Documentação | README atualizado com Investigação (4), dependências diretas (6), Planejamento com resumo (7) e Logística (8). | Revisão final na T08. |
 
 Na versão inicial, o README afirmava integração do módulo 6 ao modo Investigação, embora os acessos fossem separados. A T01 corrigiu a descrição e a T06 passou a reunir integridade e dependências no modo Investigação, mantendo a opção 6 como acesso direto à mesma estrutura de dependências.
@@ -132,8 +132,8 @@ A distribuição abaixo é uma proposta operacional. Quem implementa apresenta o
 - [x] **T04 — Implementar Prim.** Concluída em 26/11/2026.
 - [x] **T05 — Implementar o resumo regional.** Concluída em 26/11/2026, nesta sessão a pedido de Mariana.
 - [x] **T06 — Integrar modos e menus.** Concluída em 27/11/2026.
-- [ ] **T07 — Executar a validação final e a regressão.** Próxima tarefa.
-- [ ] **T08 — Finalizar documentação, entrega e ensaio.**
+- [x] **T07 — Executar a validação final e a regressão.** Concluída em 27/11/2026.
+- [ ] **T08 — Finalizar documentação, entrega e ensaio.** Próxima tarefa.
 
 Marcar uma tarefa somente depois de verificar seu critério de conclusão. Registrar o que foi executado e as pendências no histórico abaixo.
 
@@ -202,12 +202,12 @@ docs: registra testes e exemplos finais do T2
 ## Checklist de conclusão
 
 - [ ] Prazo e horário final conferidos; data da apresentação confirmada.
-- [ ] Módulos 1 a 7 preservados e validados na versão final.
+- [x] Módulos 1 a 7 preservados e validados na versão integrada da T07.
 - [x] Dijkstra e Prim integrados com caminho/conexões e custos corretos.
 - [x] Rede e pesos documentados, incluindo dimensões e caráter simulado.
 - [x] Resumo regional usa exatamente a seleção da mochila e fecha os totais.
 - [x] Modos de interação acessíveis e numeração consistente com o README.
-- [ ] Testes reproduzíveis presentes e resultados registrados.
+- [x] Testes reproduzíveis presentes e resultados registrados.
 - [ ] README cobre todos os entregáveis do enunciado.
 - [ ] Dados necessários versionados; compilação e execução funcionam a partir de cópia limpa.
 - [ ] Mariana e João conseguem explicar Kahn, mochila, Dijkstra, Prim e integração do resumo.
@@ -279,6 +279,25 @@ docs: registra testes e exemplos finais do T2
 - README, roteiro dos menus e check da T06 atualizados. A regressão completa de alteração/remoção e demais operações permanece para a T07.
 - Próxima ação: T07, validação final e regressão do sistema integrado.
 
+### Organização dos algoritmos em 27 de novembro
+
+- A pedido de Mariana, as técnicas foram separadas em arquivos próprios, seguindo a identificação por nome já usada em `hash`, `btree` e `greedy` no T1.
+- Novos pares `.c/.h`: `grafo` (matriz logística), `dijkstra`, `prim`, `mochila` e `kahn`. `rede` mantém o menu de Logística; `otimizacao` mantém a preparação dos itens e a interação; `dependencias` mantém o cadastro e o menu do grafo direcionado.
+- As funções foram movidas preservando assinaturas, cálculos e comportamentos. `main.c` inclui cada implementação uma vez. As três suítes C e os dez testes de terminal passaram após a separação.
+- O README possui uma tabela com os arquivos e suas estruturas/algoritmos. Os registros históricos anteriores usam os nomes dos arquivos existentes no momento de cada entrega.
+- A separação foi concluída antes da regressão ampliada descrita na T07 abaixo.
+
+### T07 concluída em 27 de novembro
+
+- Adicionado `tests/teste_regressao.c`, com um modelo em vetor para conferir Hash e os três índices B+ após inserir 160 registros que colidem no mesmo bucket, alterar, remover, reinserir, esvaziar e reutilizar as estruturas. Verificadas consultas exatas, prefixos, faixas, ordenação e assinaturas de integridade.
+- A suíte de terminal foi ampliada de dez para 23 testes, cobrindo cadastro, alterações de tipo/região/data, ausência de entradas antigas nos índices, remoção, cancelamentos, reaproveitamento das ocorrências na otimização/resumo, consultas e ordenações conferidas com o CSV.
+- Também verificados prioridades, integridade sem registro, duplicatas e conflitos em cenário temporário, os dois critérios do guloso com e sem limite, CSV ausente e linhas incompatíveis. Os testes não modificam a amostra versionada.
+- Reproduzidas e corrigidas três falhas: alteração aceitava apagar o tipo obrigatório; conversão por `atoi` não validava limites; limite negativo do guloso era tratado como ilimitado. As correções preservam os registros em operação inválida e rejeitam valores fora da faixa.
+- `ler_inteiro` passou a usar `strtol`, `errno` e limites de `int`, rejeitando entrada potencialmente truncada. O cabeçalho de entrada e o README descrevem esse comportamento.
+- Todas as quatro suítes C passaram no Windows com GCC 15.2.0 e `-std=c11 -Wall -Wextra -Werror`. Os 23 testes de terminal passaram, incluindo os casos que reproduziam as falhas corrigidas. Os resultados dos módulos 6 a 9 foram preservados após a organização por técnica.
+- Check da T07 e resultados no README atualizados. A cópia limpa, revisão final dos entregáveis e ensaio continuam para a T08.
+- Próxima ação: T08, fechamento da documentação e preparação para entrega/apresentação.
+
 ## Registro em Git
 
 - T01: commit `7b0ab7b`, `chore: adiciona validacao reproduzivel dos modulos 6 e 7`, na branch `chore/validacao-inicial`.
@@ -287,8 +306,10 @@ docs: registra testes e exemplos finais do T2
 - T04: branch `feat/prim`, criada a partir de `feat/dijkstra`, com Prim e validação independente por Kruskal.
 - T05: branch `feat/resumo-regional`, criada a partir de `feat/prim`, com módulo 9 integrado à otimização e testes específicos.
 - T06: branch `feat/integracao-modos`, criada a partir de `feat/resumo-regional`, com Logística, Investigação e testes de terminal.
+- Organização por técnica: branch `refactor/organiza-algoritmos`, criada a partir da T06, sem alteração das funcionalidades.
+- T07: branch `chore/validacao-final`, atualizada por avanço direto para incluir a organização por técnica; contém os testes ampliados e as correções de validação.
 - Este planejamento passa a ser versionado na raiz do repositório. Manter aqui os checks e o histórico das próximas tarefas.
-- Os registros de execução descrevem o estado ao concluir cada etapa. T01 a T05 foram enviadas ao GitHub; a T06 segue o mesmo fluxo de commit e push. Na conferência de 27/11, a `main` remota contém T01 (PR #8, merge `4747f1a`) e T02 (PR #7, merge `e53518e`). T03 a T06 permanecem nas branches de desenvolvimento nessa conferência.
+- Os registros de execução descrevem o estado ao concluir cada etapa. T01 a T06 foram enviadas ao GitHub; organização por técnica e T07 seguem o mesmo fluxo de commit e push. Na conferência de 27/11, a `main` remota contém T01 (PR #8, merge `4747f1a`) e T02 (PR #7, merge `e53518e`). As etapas seguintes permanecem nas branches de desenvolvimento nessa conferência.
 
 ## Referências verificáveis
 
