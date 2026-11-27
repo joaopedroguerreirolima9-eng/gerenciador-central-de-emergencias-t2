@@ -10,10 +10,9 @@ typedef struct
     int custo_total; // centesimos de km
 } ArvoreRede;
 
-// Parte do indice 0. Retornos: REDE_OK, REDE_SEM_SOLUCAO (vazia/desconexa)
-// ou REDE_ERRO (argumentos invalidos). Resultado vazio em falha;
-// rede com um vertice tem arvore valida com zero arestas e custo zero.
-// Recebe rede construida pelas funcoes acima; usa o mesmo desempate de Dijkstra.
+// Parte do indice 0. Retorna REDE_OK, REDE_SEM_SOLUCAO ou REDE_ERRO.
+// Rede vazia/desconexa: saida vazia. Um vertice: arvore valida de custo zero.
+// Usa grafo valido e desempata pelo menor indice.
 int rede_prim(const Rede *rede, ArvoreRede *arvore);
 
 #endif

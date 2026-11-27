@@ -111,12 +111,13 @@ void rede_menu(const Rede *rede)
         puts("Rede indisponivel.");
         return;
     }
+    int conexoes = rede_contar_conexoes(rede);
     int opcao;
     do
     {
         puts("\n=== MODO LOGISTICA: REDE DE EMERGENCIAS ===");
         printf("Rede simulada: %d regioes, %d conexoes. Custos em km.\n",
-               rede->quantidade, rede_contar_conexoes(rede));
+               rede->quantidade, conexoes);
         puts("Cenario carregado no inicio da sessao; alteracoes nas ocorrencias nao atualizam esta rede.");
         puts("1 - Listar regioes\n2 - Listar conexoes\n3 - Consultar caminho minimo (Dijkstra)\n"
              "4 - Consultar arvore geradora minima (Prim)\n0 - Voltar");
