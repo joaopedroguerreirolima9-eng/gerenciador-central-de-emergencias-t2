@@ -279,6 +279,14 @@ docs: registra testes e exemplos finais do T2
 - README, roteiro dos menus e check da T06 atualizados. A regressão completa de alteração/remoção e demais operações permanece para a T07.
 - Próxima ação: T07, validação final e regressão do sistema integrado.
 
+### Organização dos algoritmos em 27 de novembro
+
+- A pedido de Mariana, as técnicas foram separadas em arquivos próprios, seguindo a identificação por nome já usada em `hash`, `btree` e `greedy` no T1.
+- Novos pares `.c/.h`: `grafo` (matriz logística), `dijkstra`, `prim`, `mochila` e `kahn`. `rede` mantém o menu de Logística; `otimizacao` mantém a preparação dos itens e a interação; `dependencias` mantém o cadastro e o menu do grafo direcionado.
+- As funções foram movidas preservando assinaturas, cálculos e comportamentos. `main.c` inclui cada implementação uma vez. As três suítes C e os dez testes de terminal passaram após a separação.
+- O README possui uma tabela com os arquivos e suas estruturas/algoritmos. Os registros históricos anteriores usam os nomes dos arquivos existentes no momento de cada entrega.
+- A T07 continua pendente até concluir os testes adicionais de regressão.
+
 ## Registro em Git
 
 - T01: commit `7b0ab7b`, `chore: adiciona validacao reproduzivel dos modulos 6 e 7`, na branch `chore/validacao-inicial`.
@@ -287,6 +295,7 @@ docs: registra testes e exemplos finais do T2
 - T04: branch `feat/prim`, criada a partir de `feat/dijkstra`, com Prim e validação independente por Kruskal.
 - T05: branch `feat/resumo-regional`, criada a partir de `feat/prim`, com módulo 9 integrado à otimização e testes específicos.
 - T06: branch `feat/integracao-modos`, criada a partir de `feat/resumo-regional`, com Logística, Investigação e testes de terminal.
+- Organização por técnica: branch `refactor/organiza-algoritmos`, criada a partir da T06, sem alteração das funcionalidades.
 - Este planejamento passa a ser versionado na raiz do repositório. Manter aqui os checks e o histórico das próximas tarefas.
 - Os registros de execução descrevem o estado ao concluir cada etapa. T01 a T05 foram enviadas ao GitHub; a T06 segue o mesmo fluxo de commit e push. Na conferência de 27/11, a `main` remota contém T01 (PR #8, merge `4747f1a`) e T02 (PR #7, merge `e53518e`). T03 a T06 permanecem nas branches de desenvolvimento nessa conferência.
 

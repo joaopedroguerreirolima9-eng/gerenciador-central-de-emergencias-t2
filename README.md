@@ -47,6 +47,27 @@ O programa carrega o CSV e mantém os módulos 1 a 5. A opção 4 reúne as inve
 | 8 | Logística: regiões, conexões, Dijkstra e Prim (T2) |
 | 0 | Sair |
 
+## Organização do código
+
+As estruturas e os algoritmos centrais ficam identificados pelo nome do arquivo, seguindo a organização do T1. Cada técnica possui seu `.c` e seu `.h`; os arquivos de módulo mantêm os menus e a integração.
+
+| Arquivos em `src/` e `include/` | Estrutura, algoritmo ou responsabilidade |
+|---|---|
+| `hash.c/.h` | Tabela Hash com encadeamento e assinatura de integridade |
+| `btree.c/.h` | Árvore B+ usada pelos índices de tipo, região e data |
+| `greedy.c/.h` | Algoritmo guloso do T1 e cálculo de distância reutilizado |
+| `dependencias.c/.h` | Grafo direcionado em matriz e menu de dependências |
+| `kahn.c/.h` | Ordenação topológica com graus de entrada e fila |
+| `mochila.c/.h` | Programação dinâmica da mochila 0/1 e reconstrução da seleção |
+| `otimizacao.c/.h` | Prepara os itens e integra a mochila ao Planejamento Estratégico |
+| `grafo.c/.h` | Grafo logístico não direcionado e ponderado, em matriz de adjacência |
+| `dijkstra.c/.h` | Caminhos mínimos com Dijkstra |
+| `prim.c/.h` | Árvore geradora mínima com Prim |
+| `rede.c/.h` | Menu de Logística e apresentação dos resultados dos algoritmos |
+| `resumo.c/.h` | Agrupamento por região em vetor, consultando os IDs na Hash |
+
+Grafo, Hash, B+ e fila são estruturas de dados; Dijkstra, Prim e Kahn são algoritmos. A mochila é resolvida pela técnica de programação dinâmica, usando uma tabela. O programa continua sendo compilado por `src/main.c`, que inclui cada implementação uma vez.
+
 ## Fonte de dados
 
 | Item | Descrição |
@@ -133,9 +154,9 @@ Cada região será posicionada pela média aritmética das latitudes e longitude
 
 Na matriz, `-1` representa ausência de conexão, inclusive na diagonal; zero é um peso permitido. Rejeitar pesos negativos, laços e arestas duplicadas. O limite por aresta será `(INT_MAX - 1) / MAX_PONTOS_REDE`, reservando `INT_MAX` para infinito e permitindo acumular os custos de caminhos simples e árvores sem estouro. Uma conexão A–B conta como uma aresta, embora ocupe as posições `[A][B]` e `[B][A]` da matriz.
 
-**Integração:** a rede é inicializada a partir da Hash após carregar o CSV e permanece como cenário da sessão, sem modificar ocorrências, índices ou IDs do T1. Cadastro, alteração e remoção de ocorrências durante a sessão não reconstroem automaticamente esse cenário, comportamento informado no menu. O módulo 8 usa `include/rede.h` e `src/rede.c`, incluído uma única vez em `main.c`. Se os dados iniciais impedirem a construção da rede, o sistema informa a indisponibilidade da Logística e mantém os outros modos acessíveis.
+**Integração:** a rede é inicializada a partir da Hash após carregar o CSV e permanece como cenário da sessão, sem modificar ocorrências, índices ou IDs do T1. Cadastro, alteração e remoção de ocorrências durante a sessão não reconstroem automaticamente esse cenário, comportamento informado no menu. O módulo 8 usa os arquivos `grafo`, `dijkstra`, `prim` e `rede`, incluídos uma única vez em `main.c`. Se os dados iniciais impedirem a construção da rede, o sistema informa a indisponibilidade da Logística e mantém os outros modos acessíveis.
 
-O cabeçalho `rede.h` define `Rede`, `PontoRede`, `CaminhoRede`, `ArestaRede`, `ArvoreRede` e os contratos de construção, Dijkstra, Prim e menu. A implementação está em `src/rede.c`. Os testes reutilizam a unidade de compilação do programa principal, incluindo a implementação da rede uma única vez.
+`grafo.h` define a matriz e os pontos/conexões; `dijkstra.h` define o resultado do caminho; `prim.h` define o resultado da árvore; `rede.h` reúne esses contratos para o menu. As implementações ficam nos `.c` correspondentes. Os testes reutilizam a unidade de compilação do programa principal, incluindo cada implementação uma única vez.
 
 No menu principal, escolher **8 — Logística**:
 

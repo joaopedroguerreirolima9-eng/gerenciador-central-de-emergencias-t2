@@ -13,6 +13,5 @@ typedef struct
 void dependencias_inicializar(Dependencias *g);
 int dependencias_adicionar(Dependencias *g, const char *nome);
 int dependencias_ligar(Dependencias *g, int antes, int depois);
-int dependencias_kahn(const Dependencias *g, int *ordem, int *grau);
 void dependencias_menu(Dependencias *g);
 #endif
