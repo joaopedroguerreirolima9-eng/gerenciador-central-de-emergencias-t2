@@ -1,4 +1,4 @@
-# Central de Emergências — Operação Resgate
+# Central de Emergências - Operação Resgate
 
 Trabalho 2 de Algoritmos e Estruturas de Dados II (UFPel). **Integrantes:** João Pedro Guerreiro Lima e Mariana Ferreira Tica.
 
