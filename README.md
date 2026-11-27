@@ -63,9 +63,13 @@ As conexões são **simuladas**: ordenar as regiões alfabeticamente e ligar cad
 
 **Dijkstra** usa custos não negativos e predecessores para encontrar e reconstruir o menor caminho. **Prim** escolhe as conexões de menor custo para ligar todos os vértices sem ciclos; informa quando a rede é desconexa. A mesma matriz simplifica as duas implementações. Na Logística, as opções 1/2 listam regiões/conexões, 3 consulta caminho e 4 consulta árvore mínima.
 
-## Módulo 9 — Resumo regional
+## Módulo 9 — Inovação: resumo estratégico por região
 
-Mostra como os recursos selecionados foram distribuídos: busca na Hash os IDs escolhidos pela mochila e agrupa em vetor a quantidade, os minutos e o benefício por região. Reutiliza exatamente a seleção do módulo 7, sem otimizar novamente. Exibe todos os empates entre as regiões com mais atendimentos e trata seleção vazia. O relatório aparece automaticamente após otimizar.
+Implementado em `src/resumo.c`, integra a seleção da mochila com os registros da Hash para analisar como os atendimentos escolhidos se distribuem entre as regiões. O relatório aparece automaticamente após otimizar, reutilizando a seleção do módulo 7, sem executar a mochila novamente.
+
+Para cada região, mostra a quantidade de ocorrências selecionadas, os minutos utilizados e o benefício somado. Também apresenta os totais do plano e as regiões com mais atendimentos selecionados, incluindo empates. Se a seleção estiver vazia, informa que não há ocorrências para resumir.
+
+Fluxo: **mochila seleciona os IDs → Hash fornece os dados → resumo agrupa por região**. Essa visão ajuda a analisar a distribuição regional do plano gerado.
 
 ## Exemplos executados
 
@@ -93,8 +97,6 @@ Os algoritmos estão separados em `kahn`, `mochila`, `grafo`, `dijkstra` e `prim
 
 ## Testes e limites
 
-**Quatro suítes C e 23 testes de terminal passaram** no Windows, inclusive numa cópia limpa: ciclos; mochila versus força bruta; Dijkstra versus Floyd-Warshall; Prim versus Kruskal; totais do resumo; cadastro/alteração/remoção e índices B+. Os algoritmos de referência ficam somente nos testes. Os comandos completos estão em [APRESENTACAO.md](APRESENTACAO.md#como-repetir-os-testes).
+**Quatro suítes C e 23 testes de terminal passaram** no Windows, inclusive numa cópia limpa: ciclos; mochila versus força bruta; Dijkstra versus Floyd-Warshall; Prim versus Kruskal; totais do resumo; cadastro/alteração/remoção e índices B+. Os algoritmos de referência ficam somente nos testes, na pasta `tests/`.
 
 Alterações ficam em memória. A rede é fixa na sessão. A carga do CSV e várias listagens do T1 limitam-se a 1000 registros; os grafos suportam 100 vértices. O CSV atende ao formato simples da amostra e a data é validada pelo formato.
-
-[Estudo e demonstração](APRESENTACAO.md) · [Planejamento e checks](PLANEJAMENTO.md)
