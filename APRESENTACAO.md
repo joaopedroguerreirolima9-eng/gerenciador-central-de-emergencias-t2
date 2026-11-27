@@ -157,3 +157,22 @@ Cada pessoa deve conseguir executar o roteiro e explicar os cinco arquivos centr
 - [ ] Horário final de entrega e data/horário da apresentação conferidos no canal da disciplina.
 
 Esses itens dependem do ensaio de vocês; os testes automatizados não comprovam domínio individual.
+
+## Como repetir os testes
+
+No PowerShell, na raiz do projeto, com GCC no PATH e Python 3 instalado:
+
+```powershell
+gcc -std=c11 -Wall -Wextra -Werror -Iinclude src/main.c -o central.exe
+if ($LASTEXITCODE -ne 0) { throw "Falha na compilacao do programa" }
+foreach ($nome in 'teste_algoritmos', 'teste_rede', 'teste_resumo', 'teste_regressao') {
+    gcc -std=c11 -Wall -Wextra -Werror -Iinclude "tests/$nome.c" -o "$nome.exe"
+    if ($LASTEXITCODE -ne 0) { throw "Falha na compilacao de $nome" }
+    & ".\$nome.exe"
+    if ($LASTEXITCODE -ne 0) { throw "Falha em $nome" }
+}
+python tests/teste_menus.py
+if ($LASTEXITCODE -ne 0) { throw "Falha nos testes de terminal" }
+```
+
+As quatro suítes C terminam com mensagens de sucesso; a suíte Python informa `Ran 23 tests` e `OK`. Python é necessário apenas para essa automação. Os testes C usam `assert`: compile sem `-DNDEBUG`. Os CSVs alternativos dos testes são temporários.

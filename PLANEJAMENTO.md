@@ -325,6 +325,12 @@ A cópia limpa foi exportada do commit `70740fc`, sem depender de arquivos não 
 
 A T08 permanece sem check global porque ensaio e domínio individual não são comprovados por testes automatizados. Os dois devem praticar o roteiro e responder às perguntas de estudo; os checks pessoais estão no final de `APRESENTACAO.md`. A entrega técnica pode ser revisada pela dupla antes do envio ao professor.
 
+### README essencial e conferência dos PRs em 27 de novembro
+
+- README reduzido de 243 para 100 linhas, preservando os itens exigidos no relatório. Os comandos completos de testes foram movidos para `APRESENTACAO.md`.
+- Conferidos os PRs pelo GitHub e a inclusão das branches pelo histórico Git. O PR #10 foi integrado, incluindo organização por técnica e T07; todas as branches de implementação/validação estão contidas na `main`.
+- PR #11 (`docs/entrega-final`) aberto e sem conflitos na conferência. A redução do README é enviada à mesma branch e atualiza esse PR, sem criar outro. Nenhum merge foi realizado nesta revisão documental.
+
 ## Registro em Git
 
 - T01: commit `7b0ab7b`, `chore: adiciona validacao reproduzivel dos modulos 6 e 7`, na branch `chore/validacao-inicial`.
@@ -337,7 +343,7 @@ A T08 permanece sem check global porque ensaio e domínio individual não são c
 - T07: branch `chore/validacao-final`, atualizada por avanço direto para incluir a organização por técnica; contém os testes ampliados e as correções de validação.
 - Revisão/entrega: branch `docs/entrega-final`, criada a partir da T07, com relatório final, roteiro e limpeza de comentários.
 - Este planejamento passa a ser versionado na raiz do repositório. Manter aqui os checks e o histórico das próximas tarefas.
-- Os registros de execução descrevem o estado ao concluir cada etapa. T01 a T07 e a organização por técnica foram enviadas ao GitHub; revisão e entrega seguem na branch `docs/entrega-final`. Na última conferência remota, a `main` contém até T06 pelo PR #9 (merge `f84d762`). A organização por técnica, T07 e o fechamento documental permanecem nas branches próprias nessa conferência.
+- Os registros de execução descrevem o estado ao concluir cada etapa. Na conferência remota mais recente, a `main` contém todas as etapas de código e validação até T07, pelo PR #10 (merge `715309d`). A revisão e a entrega documental seguem na branch `docs/entrega-final`, coberta pelo PR #11 ainda aberto nessa conferência.
 
 ## Referências verificáveis
 
