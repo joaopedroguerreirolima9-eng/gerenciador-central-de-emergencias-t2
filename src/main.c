@@ -11,12 +11,31 @@
 #include "consultas.c"
 #include "integridade.c"
 #include "greedy.c"
+#include "rede.c"
 #include "dependencias.c"
 #include "resumo.c"
 #include "otimizacao.c"
 
 #define ARQUIVO_DADOS "data/ocorrencias_911.csv"
 #define MAX_OCORRENCIAS 1000
+
+static void investigacao_menu(TabelaHash *tabela, char *arquivo, Dependencias *dependencias)
+{
+    int opcao;
+    do
+    {
+        puts("\n=== MODO INVESTIGACAO: ANALISE OPERACIONAL ===\n"
+             "1 - Investigar integridade dos registros\n"
+             "2 - Investigar dependencias e ciclos\n0 - Voltar");
+        opcao = ler_inteiro("Opcao: ");
+        if (opcao == 1)
+            integridade_menu(tabela, arquivo);
+        else if (opcao == 2)
+            dependencias_menu(dependencias);
+        else if (opcao != 0)
+            puts("Opcao invalida.");
+    } while (opcao != 0);
+}
 
 int main(void)
 {
@@ -25,6 +44,7 @@ int main(void)
     TabelaHash tabela;
     Indices indices;
     static Dependencias dependencias;
+    static Rede rede;
 
     dependencias_inicializar(&dependencias);
 
@@ -46,6 +66,9 @@ int main(void)
         }
     }
     printf("%d ocorrencias carregadas de %s\n", tabela.quantidade, ARQUIVO_DADOS);
+    int rede_status = rede_inicializar(&rede, &tabela);
+    if (rede_status == REDE_ERRO)
+        puts("Aviso: dados invalidos para a rede. Modo Logistica indisponivel nesta sessao.");
     int proximo_id = n + 1; // os ids do arquivo vao de 1 a n
     int opcao = -1;
 
@@ -55,10 +78,11 @@ int main(void)
         printf("1 - Central de Ocorrencias\n");
         printf("2 - Consulta Rapida\n");
         printf("3 - Organizacao das Ocorrencias\n");
-        printf("4 - Investigacao (Integridade)\n");
+        printf("4 - Investigacao (Integridade e Dependencias)\n");
         printf("5 - Operacao Resgate\n");
         printf("6 - Planejamento Operacional\n");
         printf("7 - Planejamento Estrategico\n");
+        printf("8 - Logistica (Rede de Emergencias)\n");
         printf("0 - Sair\n");
         opcao = ler_inteiro("Opcao: ");
         if (opcao == 1)
@@ -75,7 +99,7 @@ int main(void)
         }
         else if (opcao == 4)
         {
-            integridade_menu(&tabela, ARQUIVO_DADOS);
+            investigacao_menu(&tabela, ARQUIVO_DADOS, &dependencias);
         }
         else if (opcao == 5)
         {
@@ -88,6 +112,13 @@ int main(void)
         else if (opcao == 7)
         {
             otimizacao_menu(&tabela, &indices);
+        }
+        else if (opcao == 8)
+        {
+            if (rede_status == REDE_ERRO)
+                puts("Logistica indisponivel: a rede nao foi inicializada com dados validos.");
+            else
+                rede_menu(&rede);
         }
         else if (opcao != 0)
         {

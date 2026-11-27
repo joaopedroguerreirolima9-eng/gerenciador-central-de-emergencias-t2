@@ -242,7 +242,7 @@ void otimizacao_menu(TabelaHash *tabela, Indices *indices)
     while (opcao != 0)
     {
         printf("\n=== MODO PLANEJAMENTO ESTRATEGICO ===\n");
-        printf("1 - Otimizar recursos\n");
+        printf("1 - Otimizar recursos e gerar resumo regional\n");
         printf("2 - Consultar dados simulados de uma ocorrencia\n");
         printf("0 - Voltar\n");
         opcao = ler_inteiro("Opcao: ");

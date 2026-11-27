@@ -3,7 +3,6 @@
 #define main central_main
 #include "../src/main.c"
 #undef main
-#include "../src/rede.c"
 
 static int contar_arestas(const Rede *rede)
 {

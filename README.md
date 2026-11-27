@@ -4,7 +4,7 @@ Trabalho 2 de Algoritmos e Estruturas de Dados II (UFPel).
 
 O projeto amplia o sistema desenvolvido no Trabalho 1, incorporando planejamento de dependências entre atividades, otimização de recursos e análise da rede logística de emergências. O objetivo é apoiar simulações de planejamento operacional e distribuição de recursos por meio de grafos e programação dinâmica.
 
-**Estado do projeto:** base do T1 reutilizada; módulos 6 e 7 implementados e testados. No módulo 8, a construção da rede, Dijkstra e Prim estão implementados e testados; o acesso pelo menu ainda está pendente. O módulo 9 está implementado e exibe o resumo regional após a otimização do módulo 7.
+**Estado do projeto:** módulos 6 a 9 implementados e integrados aos modos de interação, preservando a base do T1. Investigação reúne integridade e dependências; Planejamento Estratégico inclui otimização e resumo regional; Logística permite consultar a rede, Dijkstra e Prim. A regressão final e a revisão dos entregáveis permanecem para T07/T08.
 
 ## Integrantes
 
@@ -33,17 +33,18 @@ gcc -Iinclude src/main.c -o central
 ./central
 ```
 
-O programa carrega o CSV e mantém os módulos 1 a 5. No menu principal, a opção 6 permite acessar o Módulo 6 (dependências) e a opção 7 permite acessar o Módulo 7 (otimização).
+O programa carrega o CSV e mantém os módulos 1 a 5. A opção 4 reúne as investigações de integridade e dependências; a opção 6 mantém o acesso direto às dependências. A opção 7 executa a otimização e o resumo regional. A opção 8 abre o modo Logística.
 
 | Opção | Funcionalidade |
 |---|---|
 | 1 | Central de Ocorrências |
 | 2 | Consulta Rápida |
 | 3 | Organização das Ocorrências |
-| 4 | Investigação de integridade dos registros (T1) |
+| 4 | Investigação: submenu 1 para integridade (T1), submenu 2 para dependências e ciclos (T2) |
 | 5 | Operação Resgate com algoritmo guloso (T1) |
 | 6 | Planejamento Operacional: dependências (T2) |
-| 7 | Planejamento Estratégico: otimização (T2) |
+| 7 | Planejamento Estratégico: otimização e resumo regional (T2) |
+| 8 | Logística: regiões, conexões, Dijkstra e Prim (T2) |
 | 0 | Sair |
 
 ## Fonte de dados
@@ -64,7 +65,7 @@ O sistema mantém os identificadores (IDs) gerados no T1. As atividades e depend
 |---|---|---|
 | 6 – Planejamento Operacional | Ordenação topológica (Kahn) | Implementado |
 | 7 – Operação Estratégica | Programação dinâmica (Mochila 0/1) | Implementado |
-| 8 – Rede de Emergências | Dijkstra e Prim | Rede e algoritmos implementados; menu pendente |
+| 8 – Rede de Emergências | Dijkstra e Prim | Implementado e integrado ao modo Logística |
 | 9 – Laboratório de Inovação | Resumo estratégico por região | Implementado e integrado ao módulo 7 |
 
 ### Módulo 6 – Planejamento Operacional: Dependências de Atendimento
@@ -132,15 +133,27 @@ Cada região será posicionada pela média aritmética das latitudes e longitude
 
 Na matriz, `-1` representa ausência de conexão, inclusive na diagonal; zero é um peso permitido. Rejeitar pesos negativos, laços e arestas duplicadas. O limite por aresta será `(INT_MAX - 1) / MAX_PONTOS_REDE`, reservando `INT_MAX` para infinito e permitindo acumular os custos de caminhos simples e árvores sem estouro. Uma conexão A–B conta como uma aresta, embora ocupe as posições `[A][B]` e `[B][A]` da matriz.
 
-**Integração:** a rede será inicializada a partir da Hash após carregar o CSV e permanecerá como cenário da sessão, sem modificar ocorrências, índices ou IDs do T1. Cadastro, alteração e remoção de ocorrências durante a sessão não reconstruirão automaticamente esse cenário. O módulo 8 usará `include/rede.h` e `src/rede.c`; a implementação será incluída uma única vez em `main.c`. O acesso pelo modo Logística será integrado na T06.
+**Integração:** a rede é inicializada a partir da Hash após carregar o CSV e permanece como cenário da sessão, sem modificar ocorrências, índices ou IDs do T1. Cadastro, alteração e remoção de ocorrências durante a sessão não reconstroem automaticamente esse cenário, comportamento informado no menu. O módulo 8 usa `include/rede.h` e `src/rede.c`, incluído uma única vez em `main.c`. Se os dados iniciais impedirem a construção da rede, o sistema informa a indisponibilidade da Logística e mantém os outros modos acessíveis.
 
-O cabeçalho `rede.h` define `Rede`, `PontoRede`, `CaminhoRede`, `ArestaRede`, `ArvoreRede` e os contratos de construção, Dijkstra, Prim e menu. A construção, Dijkstra e Prim estão implementados em `src/rede.c` e são exercitados por `tests/teste_rede.c`. **O menu ainda não está implementado.** Nesta etapa, o programa principal mantém os menus existentes; os testes incluem `rede.c` diretamente até a integração da T06.
+O cabeçalho `rede.h` define `Rede`, `PontoRede`, `CaminhoRede`, `ArestaRede`, `ArvoreRede` e os contratos de construção, Dijkstra, Prim e menu. A implementação está em `src/rede.c`. Os testes reutilizam a unidade de compilação do programa principal, incluindo a implementação da rede uma única vez.
+
+No menu principal, escolher **8 — Logística**:
+
+| Opção da Logística | Operação |
+|---|---|
+| 1 | Listar regiões com IDs a partir de 1 |
+| 2 | Listar cada conexão não direcionada uma vez, com custo em km |
+| 3 | Consultar caminho mínimo por IDs de origem e destino; `0` cancela a consulta |
+| 4 | Consultar árvore geradora mínima, suas conexões e custo total |
+| 0 | Voltar ao menu principal |
+
+Exemplo executado: **8 → 3 → origem 1 (ABINGTON) → destino 22 (NORRISTOWN)** exibe o percurso e **191,68 km**. Ainda na Logística, a opção **4** exibe as **40 arestas** da árvore e custo total **719,23 km**. O programa informa destino inalcançável ou rede desconexa quando não há solução completa e não apresenta resultados parciais como solução.
 
 Em empate, os algoritmos deverão escolher o menor índice ao selecionar o próximo vértice e atualizar o predecessor somente quando houver melhoria estrita de custo, tornando os resultados reproduzíveis.
 
 #### Caminhos mínimos – Dijkstra
 
-Implementado em `rede_dijkstra`: determina o caminho de menor custo entre dois pontos e preenche `CaminhoRede` com os vértices em ordem e o custo total. Retorna `REDE_OK`, `REDE_SEM_SOLUCAO` para destino inalcançável ou `REDE_ERRO` para argumentos inválidos. Em falha, o resultado fica vazio; origem igual ao destino gera um vértice e custo zero. A consulta pelo menu será integrada na T06.
+Implementado em `rede_dijkstra`: determina o caminho de menor custo entre dois pontos e preenche `CaminhoRede` com os vértices em ordem e o custo total. Retorna `REDE_OK`, `REDE_SEM_SOLUCAO` para destino inalcançável ou `REDE_ERRO` para argumentos inválidos. Em falha, o resultado fica vazio; origem igual ao destino gera um vértice e custo zero. O menu valida os IDs antes de convertê-los para índices internos.
 
 **Justificativa:** Dijkstra é adequado para custos não negativos e permite reconstruir o caminho por meio dos predecessores. Com matriz de adjacência, o tempo é `O(V²)`.
 
@@ -162,7 +175,7 @@ O algoritmo começa no índice 0 e mantém, para cada vértice ainda fora da ár
 
 **Justificativa:** Prim permite reutilizar a mesma representação de grafo de Dijkstra e possui tempo `O(V²)` com matriz de adjacência.
 
-Na rede simulada de **41 vértices e 82 arestas**, Prim selecionou **40 arestas**, com custo total de **719,23 km**. Os testes conferem o custo com Kruskal e verificam que todas as regiões estão conectadas, nenhuma aresta cria ciclo e a soma dos pesos corresponde ao total informado. O valor representa a soma das conexões da árvore na topologia didática, sem interpretação de rota rodoviária real. A exibição no modo Logística será integrada na T06.
+Na rede simulada de **41 vértices e 82 arestas**, Prim selecionou **40 arestas**, com custo total de **719,23 km**. Os testes conferem o custo com Kruskal e verificam que todas as regiões estão conectadas, nenhuma aresta cria ciclo e a soma dos pesos corresponde ao total informado. O valor representa a soma das conexões da árvore na topologia didática, sem interpretação de rota rodoviária real. A árvore e seus custos são exibidos na opção 4 da Logística.
 
 Exemplo ilustrativo: A–B (4 km), A–C (10 km) e B–C (3 km). Dijkstra encontra A–B–C como caminho mínimo de A até C (7 km); Prim seleciona A–B e B–C para conectar todos os vértices (7 km).
 
@@ -190,15 +203,15 @@ Com região em branco e capacidade 60, o teste selecionou uma ocorrência de HAT
 
 Os módulos 1 a 5 permanecem disponíveis. A Tabela Hash é o armazenamento principal das ocorrências, e as Árvores B+ fornecem índices por tipo, região e data. O Algoritmo Guloso do T1 continua responsável pela ordenação de atendimentos, enquanto o Módulo 7 resolve a seleção ótima sob uma restrição de capacidade.
 
-O Módulo 7 reutiliza os registros da Tabela Hash, o índice B+ por região e a classificação do algoritmo guloso. A consulta rápida também apresenta os dados simulados de cada ocorrência e permite filtrar por prioridade. Nesta versão, a investigação de integridade do T1 permanece na opção 4; a investigação das dependências e dos ciclos do Módulo 6 está disponível separadamente na opção 6. O módulo 9 usa os IDs selecionados e a Hash para montar o resumo; o módulo 8 constrói sua rede sobre as regiões da mesma base, com acesso pelo menu ainda pendente. A documentação detalhada das funcionalidades anteriores está no [README do T1](https://github.com/marianatica/gerenciador-central-de-emergencias).
+O Módulo 7 reutiliza os registros da Tabela Hash, o índice B+ por região e a classificação do algoritmo guloso. A consulta rápida também apresenta os dados simulados de cada ocorrência e permite filtrar por prioridade. A opção 4 agora reúne integridade do T1 e dependências do T2 em um submenu, sem reimplementar essas operações. O acesso direto da opção 6 utiliza a mesma estrutura de dependências: alterações feitas por um acesso são vistas pelo outro. O módulo 9 usa os IDs selecionados e a Hash para montar o resumo; o módulo 8 constrói sua rede sobre as regiões da mesma base e é acessado pela opção 8. A documentação detalhada das funcionalidades anteriores está no [README do T1](https://github.com/marianatica/gerenciador-central-de-emergencias).
 
 ## Modos de interação
 
 | Modo | Funcionalidades e situação |
 |---|---|
-| Investigação – Análise Operacional | Integridade dos registros na opção 4; dependências e ciclos na opção 6. As duas funcionalidades estão implementadas, com acessos separados. |
+| Investigação – Análise Operacional | Opção 4: integridade no submenu 1; dependências e ciclos no submenu 2. A opção 6 mantém acesso direto às mesmas dependências. |
 | Planejamento Estratégico | Seleção de ocorrências sob restrições e resumo regional da mesma seleção, exibido automaticamente (implementados) |
-| Logística – Rede de Emergências | Construção da rede, Dijkstra e Prim implementados e testados; acesso pelo menu pendente |
+| Logística – Rede de Emergências | Opção 8: regiões, conexões e custos, caminhos mínimos e árvore geradora mínima |
 | Consulta Rápida | Reutilização das consultas do T1 e acesso aos dados do Módulo 7 (implementado) |
 
 ## Análise de complexidade
@@ -227,7 +240,7 @@ Validação local executada em **26/11/2026**, no **Windows com GCC 15.2.0**, se
 - [x] Abertura e retorno dos sete menus; ordem inicial, inclusão de ciclo e remoção da dependência pelo menu do Módulo 6.
 - [x] Módulo 8: construção da rede, caminhos mínimos e destino inalcançável (T03).
 - [x] Módulo 8: árvore geradora mínima e rede desconexa (T04).
-- [ ] Módulo 8: integração pelo menu (T06).
+- [x] Módulo 8: integração pelo menu (T06).
 - [x] Módulo 9: totais regionais e gerais iguais aos da seleção da mochila, empates, região vazia e seleção vazia (T05).
 - [ ] Revisar todos os módulos 1 a 5 após a integração final.
 - [ ] Registrar dimensões e resultados da rede logística após implementação.
@@ -296,11 +309,28 @@ Validação da T05, no Windows com GCC 15.2.0, sem avisos:
 
 O executável termina com `Todos os testes do resumo passaram.`. Os testes anteriores dos módulos 6/7 e da rede também passaram após essa integração.
 
+Validação da T06 em **27/11/2026**, no Windows com GCC, sem avisos em `-std=c11 -Wall -Wextra -Werror`:
+
+- [x] Abertura e retorno dos oito acessos principais, incluindo os dois submenus da Investigação.
+- [x] Dependências compartilhadas entre a Investigação e a opção 6; ciclo criado por um acesso e removido pelo outro.
+- [x] Listagem de 41 regiões e 82 conexões, caminho mínimo e árvore geradora com os custos esperados pelo terminal.
+- [x] Origem igual ao destino, IDs inválidos, cancelamento, opção inválida e encerramento da entrada.
+- [x] Otimização com resumo, Consulta Rápida e manutenção do cenário logístico após cadastrar uma ocorrência.
+- [x] CSV vazio e falha de inicialização da rede sem bloquear as funcionalidades do T1.
+
+Os dez testes de terminal são reproduzíveis com **Python 3**, sem bibliotecas externas. Python é necessário apenas para esta automação de testes; o programa continua sendo compilado e executado em C:
+
+```powershell
+gcc -std=c11 -Wall -Wextra -Werror -Iinclude src/main.c -o central.exe
+python tests/teste_menus.py
+```
+
+Os CSVs alternativos usados nessa suíte são criados em diretórios temporários, preservando a amostra do projeto. As três suítes C também passaram novamente após a integração.
+
 ## Próximas etapas
 
-- Integrar Dijkstra e Prim ao modo Logística.
-- Revisar a organização dos modos de interação.
-- Realizar testes finais de integração e atualizar este relatório.
+- Executar a regressão final de cadastro, alteração, remoção, índices e demais operações do T1 (T07).
+- Revisar os entregáveis, testar uma cópia limpa e preparar a apresentação (T08).
 
 ## Bibliotecas utilizadas
 
