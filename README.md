@@ -95,8 +95,6 @@ Fluxo: **mochila seleciona os IDs → Hash fornece os dados → resumo agrupa po
 
 Os algoritmos estão separados em `kahn`, `mochila`, `grafo`, `dijkstra` e `prim`, com `.c` em `src/` e `.h` em `include/`. Usa-se apenas a biblioteca padrão de C para entrada/saída, memória, strings, limites, validação numérica e ordenação de nomes/IDs. Os algoritmos centrais são implementados no projeto; `qsort` é apenas apoio.
 
-## Testes e limites
-
-**Quatro suítes C e 23 testes de terminal passaram** no Windows, inclusive numa cópia limpa: ciclos; mochila versus força bruta; Dijkstra versus Floyd-Warshall; Prim versus Kruskal; totais do resumo; cadastro/alteração/remoção e índices B+. Os algoritmos de referência ficam somente nos testes, na pasta `tests/`.
+## Limites
 
 Alterações ficam em memória. A rede é fixa na sessão. A carga do CSV e várias listagens do T1 limitam-se a 1000 registros; os grafos suportam 100 vértices. O CSV atende ao formato simples da amostra e a data é validada pelo formato.
