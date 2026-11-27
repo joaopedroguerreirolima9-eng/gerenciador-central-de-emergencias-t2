@@ -47,13 +47,9 @@ int rede_adicionar(Rede *rede, const char *regiao, double lat, double lng);
 // Rejeita indices invalidos, lacos e custo fora de [0, REDE_CUSTO_MAXIMO].
 int rede_ligar(Rede *rede, int origem, int destino, int custo);
 
-// Le a Hash, agrupa regioes e calcula coordenadas medias, sem alterar a base.
-// Ordena regioes por strcmp; liga cada indice aos sucessores +1 e +2,
-// circularmente, sem lacos nem duplicatas. Peso: distancia_km * 100,
-// arredondada para o inteiro mais proximo (metades para cima).
-// Retorna numero de vertices; -1 se faltar espaco ou houver dados invalidos.
-// Em erro, deixa a rede vazia. Hash vazia gera rede vazia (retorno 0).
-// Regiao vazia e nome invalido sao erros; nao descartar registros em silencio.
+// Agrupa a Hash por regiao e calcula coordenadas medias, sem alterar a base.
+// Ordena os nomes e liga sucessores +1/+2 em anel. Peso em centesimos de km.
+// Retorna V, ou -1 em erro deixando a rede vazia. Hash vazia retorna 0.
 int rede_inicializar(Rede *rede, const TabelaHash *tabela);
 
 #endif

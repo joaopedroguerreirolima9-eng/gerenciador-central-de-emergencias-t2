@@ -10,9 +10,8 @@ typedef struct
     int custo_total; // centesimos de km
 } CaminhoRede;
 
-// Retornos: REDE_OK, REDE_SEM_SOLUCAO (sem caminho) ou REDE_ERRO
-// (argumentos invalidos). Origem igual ao destino: 1 vertice, custo zero.
-// Recebe rede construida pelas funcoes acima. Resultado vazio em falha.
+// Retorna REDE_OK, REDE_SEM_SOLUCAO ou REDE_ERRO; saida vazia em falha.
+// Usa grafo valido. Origem igual ao destino: um vertice, custo zero.
 // Empate: menor indice na escolha do vertice; so atualiza em custo menor.
 int rede_dijkstra(const Rede *rede, int origem, int destino, CaminhoRede *caminho);
 

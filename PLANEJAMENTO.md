@@ -133,7 +133,7 @@ A distribuição abaixo é uma proposta operacional. Quem implementa apresenta o
 - [x] **T05 — Implementar o resumo regional.** Concluída em 26/11/2026, nesta sessão a pedido de Mariana.
 - [x] **T06 — Integrar modos e menus.** Concluída em 27/11/2026.
 - [x] **T07 — Executar a validação final e a regressão.** Concluída em 27/11/2026.
-- [ ] **T08 — Finalizar documentação, entrega e ensaio.** Próxima tarefa.
+- [ ] **T08 — Finalizar documentação, entrega e ensaio.** Fechamento técnico em andamento; ensaio da dupla pendente.
 
 Marcar uma tarefa somente depois de verificar seu critério de conclusão. Registrar o que foi executado e as pendências no histórico abaixo.
 
@@ -208,7 +208,7 @@ docs: registra testes e exemplos finais do T2
 - [x] Resumo regional usa exatamente a seleção da mochila e fecha os totais.
 - [x] Modos de interação acessíveis e numeração consistente com o README.
 - [x] Testes reproduzíveis presentes e resultados registrados.
-- [ ] README cobre todos os entregáveis do enunciado.
+- [x] README cobre os itens do relatório exigidos no enunciado, com fontes/dados, escolhas, complexidades e exemplos.
 - [ ] Dados necessários versionados; compilação e execução funcionam a partir de cópia limpa.
 - [ ] Mariana e João conseguem explicar Kahn, mochila, Dijkstra, Prim e integração do resumo.
 
@@ -298,6 +298,15 @@ docs: registra testes e exemplos finais do T2
 - Check da T07 e resultados no README atualizados. A cópia limpa, revisão final dos entregáveis e ensaio continuam para a T08.
 - Próxima ação: T08, fechamento da documentação e preparação para entrega/apresentação.
 
+### Revisão do enunciado e preparação da entrega em 27 de novembro
+
+- Relidas as oito páginas do PDF e conferidos os módulos, modos, entregáveis e critérios de apresentação. A matriz de correspondência está no README. Não foi identificado requisito funcional obrigatório sem implementação na versão revisada.
+- Mantidas as duas técnicas escolhidas do módulo 8 (Dijkstra e Prim); fluxo máximo é a terceira alternativa do enunciado, não uma exigência adicional. A recomendação de dimensão é atendida pelos cenários de 30/54 e 41/82.
+- Revisados os arquivos do T1/T2. Os algoritmos auxiliares Floyd-Warshall/Kruskal continuam apenas nos testes; a aplicação usa as técnicas exigidas e a biblioteca padrão. Não foram retirados testes ou verificações de entrada, alocação e limites para reduzir artificialmente o código.
+- README reescrito como relatório final, sem o histórico de etapas repetido. O histórico e os checks permanecem neste planejamento. Comentários dos novos cabeçalhos foram encurtados, e a contagem de conexões da rede passa a ser feita uma vez por acesso ao menu.
+- Criado `APRESENTACAO.md`, com sequência de demonstração, explicação dos algoritmos e estruturas, pontos de C usados e perguntas para ensaiar. O roteiro distingue dados da amostra, parâmetros simulados e limites da versão.
+- A validação de cópia limpa e a conferência do pacote pertencem ao fechamento técnico da T08. O domínio individual e o ensaio de Mariana e João continuam pendentes de realização pela dupla.
+
 ## Registro em Git
 
 - T01: commit `7b0ab7b`, `chore: adiciona validacao reproduzivel dos modulos 6 e 7`, na branch `chore/validacao-inicial`.
@@ -308,6 +317,7 @@ docs: registra testes e exemplos finais do T2
 - T06: branch `feat/integracao-modos`, criada a partir de `feat/resumo-regional`, com Logística, Investigação e testes de terminal.
 - Organização por técnica: branch `refactor/organiza-algoritmos`, criada a partir da T06, sem alteração das funcionalidades.
 - T07: branch `chore/validacao-final`, atualizada por avanço direto para incluir a organização por técnica; contém os testes ampliados e as correções de validação.
+- Revisão/entrega: branch `docs/entrega-final`, criada a partir da T07, com relatório final, roteiro e limpeza de comentários.
 - Este planejamento passa a ser versionado na raiz do repositório. Manter aqui os checks e o histórico das próximas tarefas.
 - Os registros de execução descrevem o estado ao concluir cada etapa. T01 a T06 foram enviadas ao GitHub; organização por técnica e T07 seguem o mesmo fluxo de commit e push. Na conferência de 27/11, a `main` remota contém T01 (PR #8, merge `4747f1a`) e T02 (PR #7, merge `e53518e`). As etapas seguintes permanecem nas branches de desenvolvimento nessa conferência.
 
