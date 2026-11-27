@@ -38,12 +38,12 @@ A avaliação combina código (80%) e apresentação (20%) por média harmônica
 | Módulos 1 a 5 | CSV, Hash, B+, cadastro, consultas, integridade e guloso presentes. | Testar regressão após integrar os novos módulos. |
 | Módulo 6 | `dependencias.c/.h`: matriz direcionada, Kahn, cadastro/remoção de dependências, cenário de 30 atividades e 54 arestas. | Validar ordem e ciclos; alinhar documentação e acesso ao modo Investigação. |
 | Módulo 7 | `otimizacao.c/.h`: mochila 0/1, reconstrução, filtro por região e parâmetros simulados. | Validar resultado e fornecer seleção ao módulo 9. |
-| Módulo 8 | T02 definiu a rede de 41 regiões/82 arestas e criou localmente o contrato `include/rede.h`; algoritmos ainda não implementados. | Implementar construção da rede e Dijkstra na T03; Prim na T04. |
-| Módulo 9 | Resumo regional proposto no README; implementação ausente. | Reutilizar o resultado da mochila e agrupar por região. |
+| Módulo 8 | Construção da rede, Dijkstra e Prim integrados ao modo Logística na T06. | Repetir a validação na versão final da T07. |
+| Módulo 9 | Resumo integrado à otimização e conferido nos testes de menus da T06. | Repetir a regressão na T07. |
 | Testes | O arquivo citado não existia na versão remota analisada. Na T01 foi adicionado localmente `tests/teste_algoritmos.c`, executado com sucesso no Windows. | Expandir a validação para os módulos 8 e 9 e repetir a regressão na T07. |
-| Documentação | O roteiro de menus foi corrigido no README local durante a T01. | Manter as opções 6 e 7 para os módulos novos; atualizar novamente ao integrar a Logística. |
+| Documentação | README atualizado com Investigação (4), dependências diretas (6), Planejamento com resumo (7) e Logística (8). | Revisão final na T08. |
 
-Na versão remota analisada, o README afirmava integração do módulo 6 ao modo Investigação, embora a `main.c` chame `integridade_menu` e `dependencias_menu` separadamente. A T01 corrigiu a descrição no README local. A organização dos acessos será revisada na T06.
+Na versão inicial, o README afirmava integração do módulo 6 ao modo Investigação, embora os acessos fossem separados. A T01 corrigiu a descrição e a T06 passou a reunir integridade e dependências no modo Investigação, mantendo a opção 6 como acesso direto à mesma estrutura de dependências.
 
 ## Padrões observados no projeto
 
@@ -128,11 +128,11 @@ A distribuição abaixo é uma proposta operacional. Quem implementa apresenta o
 
 - [x] **T01 — Preparar e validar a base local.** Concluída em 26/11/2026.
 - [x] **T02 — Fechar a modelagem e a interface da rede.** Concluída em 26/11/2026.
-- [ ] **T03 — Implementar a rede e Dijkstra.** Próxima tarefa.
-- [ ] **T04 — Implementar Prim.**
-- [ ] **T05 — Implementar o resumo regional.**
-- [ ] **T06 — Integrar modos e menus.**
-- [ ] **T07 — Executar a validação final e a regressão.**
+- [x] **T03 — Implementar a rede e Dijkstra.** Concluída em 26/11/2026.
+- [x] **T04 — Implementar Prim.** Concluída em 26/11/2026.
+- [x] **T05 — Implementar o resumo regional.** Concluída em 26/11/2026, nesta sessão a pedido de Mariana.
+- [x] **T06 — Integrar modos e menus.** Concluída em 27/11/2026.
+- [ ] **T07 — Executar a validação final e a regressão.** Próxima tarefa.
 - [ ] **T08 — Finalizar documentação, entrega e ensaio.**
 
 Marcar uma tarefa somente depois de verificar seu critério de conclusão. Registrar o que foi executado e as pendências no histórico abaixo.
@@ -203,10 +203,10 @@ docs: registra testes e exemplos finais do T2
 
 - [ ] Prazo e horário final conferidos; data da apresentação confirmada.
 - [ ] Módulos 1 a 7 preservados e validados na versão final.
-- [ ] Dijkstra e Prim integrados com caminho/conexões e custos corretos.
-- [ ] Rede e pesos documentados, incluindo dimensões e caráter simulado.
-- [ ] Resumo regional usa exatamente a seleção da mochila e fecha os totais.
-- [ ] Modos de interação acessíveis e numeração consistente com o README.
+- [x] Dijkstra e Prim integrados com caminho/conexões e custos corretos.
+- [x] Rede e pesos documentados, incluindo dimensões e caráter simulado.
+- [x] Resumo regional usa exatamente a seleção da mochila e fecha os totais.
+- [x] Modos de interação acessíveis e numeração consistente com o README.
 - [ ] Testes reproduzíveis presentes e resultados registrados.
 - [ ] README cobre todos os entregáveis do enunciado.
 - [ ] Dados necessários versionados; compilação e execução funcionam a partir de cópia limpa.
@@ -235,12 +235,60 @@ docs: registra testes e exemplos finais do T2
 - Cabeçalho compilado isoladamente e com inclusão repetida usando GCC, `-std=c11 -Wall -Wextra -Werror -fsyntax-only`, sem erros ou avisos. Verificado também que o limite acumulado dos custos fica abaixo de `INT_MAX`.
 - Próxima ação: T03, implementar `src/rede.c` com inicialização, validação e Dijkstra, e comparar resultados com casos pequenos conhecidos. Prim permanece na T04; integração dos menus na T06.
 
+### T03 concluída em 26 de novembro
+
+- Criado `src/rede.c` com limpeza da matriz, cadastro de regiões, inclusão simétrica de arestas, agrupamento da Hash, médias das coordenadas, ordenação alfabética e geração das conexões simuladas. Dados inválidos ou excesso de regiões deixam a rede vazia e retornam erro.
+- Implementado Dijkstra com pesos não negativos, desempate por menor índice, reconstrução do percurso e resultado vazio para falhas. O algoritmo informa destino inalcançável, trata origem igual ao destino e protege a soma dos custos.
+- Criado `tests/teste_rede.c`: casos pequenos conhecidos, peso zero, empate, isolamento, argumentos inválidos, redes de 0 a 5 regiões, médias regionais e preservação da base, excesso de regiões e um caminho de 100 vértices com pesos máximos.
+- Comparação independente com Floyd-Warshall em 20 grafos pequenos e nos 1.681 pares da rede do CSV; também conferidos os vértices, as arestas e a soma dos pesos do percurso reconstruído.
+- A construção em C confirmou 41 regiões e 82 arestas, com pesos de 378 a 6490 centésimos de km e ABINGTON–AMBLER = 1334. O teste ABINGTON–NORRISTOWN encontrou custo 19168 (191,68 km) na topologia simulada.
+- GCC no Windows com `-std=c11 -Wall -Wextra -Werror`: programa principal, testes dos módulos 6/7 e testes da rede compilados sem avisos; os dois executáveis de testes passaram.
+- README e contrato atualizados. A implementação permanece sem acesso pelo menu até a T06; os testes incluem `rede.c` diretamente. Prim continua pendente na T04.
+- Projeto aberto no VS Code com `src/rede.c` selecionado, conforme solicitado por Mariana.
+- Próxima ação: T04, implementar e testar Prim sobre a mesma rede, incluindo o caso desconexo.
+
+### T04 concluída em 26 de novembro
+
+- Implementado `rede_prim` em `src/rede.c`, sobre a matriz não direcionada e os custos definidos na T02. Inicia no índice 0, seleciona a conexão de menor custo e usa desempate determinístico. Tempo `O(V²)` e espaço auxiliar `O(V)`.
+- A árvore é acumulada em um resultado temporário. Só é publicada após conectar todos os vértices; rede vazia/desconexa retorna sem solução e deixa a saída vazia. Vértice único produz árvore válida com zero arestas.
+- Testes ampliados em `tests/teste_rede.c`: triângulo, empates, custo zero, região isolada, rede vazia, vértice único e argumentos inválidos. Também conferidos os casos de 0 a 5 regiões e caminho de 100 vértices com pesos máximos.
+- Comparação independente com Kruskal em 20 grafos pequenos e na rede do CSV. Os testes validam custo, `V - 1` arestas, existência das conexões, ausência de ciclos e conectividade.
+- Resultado da amostra: 41 regiões, 82 arestas disponíveis; árvore mínima com 40 arestas e custo total 71923 centésimos de km (719,23 km).
+- Compilação e testes no Windows com GCC e `-std=c11 -Wall -Wextra -Werror`; rede, Dijkstra e módulos 6/7 validados. README e contrato atualizados. O acesso pelo menu permanece para a T06.
+- Próxima ação: T05, resumo regional do módulo 9. João permanece como responsável sugerido no planejamento; evitar alterações concorrentes em `otimizacao.c/.h` sem alinhamento entre a dupla.
+
+### T05 concluída em 26 de novembro
+
+- Conferidas as atualizações do GitHub antes de iniciar: não havia implementação publicada de resumo regional nas branches disponíveis. A T05 foi executada nesta sessão a pedido de Mariana, embora a distribuição inicial sugerisse João.
+- Criados `include/resumo.h` e `src/resumo.c` com cálculo, apresentação e liberação do resumo. Agrupamento por região, totais, ordenação alfabética e destaque de todas as regiões empatadas com mais atendimentos.
+- O resultado consome os mesmos itens e a mesma máscara da mochila, buscando as regiões pelos IDs na Hash. Não recalcula a seleção nem o custo/benefício e não retém ponteiros para vetores já liberados.
+- Integrado em `plano_resultado`, antes da liberação da seleção; `main.c` inclui `resumo.c` uma vez, preservando o modelo de compilação. O resumo já pode ser usado no menu principal 7, opção 1, imediatamente após otimizar. A Logística e a revisão dos demais modos continuam para a T06.
+- Criado `tests/teste_resumo.c`: regiões múltiplas, totais exatos, empates, região vazia, seleção vazia, argumentos inválidos, ID ausente e proteção da soma. Teste do CSV NORRISTOWN/60: 2 ocorrências, 60 minutos, 8 pontos. Também conferidas 21 capacidades entre 0 e 300 minutos sobre todas as candidatas.
+- Pelo terminal, verificados resumo automático, capacidade zero, empate entre HATFIELD TOWNSHIP e NEW HANOVER, região inexistente e duas otimizações consecutivas sem reaproveitar resultado antigo. Conferidas também a impressão dos empates e a região sem nome.
+- Programa principal e três suítes de testes compilados com `-std=c11 -Wall -Wextra -Werror`, sem avisos no Windows; todos os testes passaram. README e check da T05 atualizados.
+- Próxima ação: T06, integrar Dijkstra/Prim ao modo Logística e revisar a organização dos modos preservando as funções do T1.
+
+### T06 concluída em 27 de novembro
+
+- Conferidas as atualizações remotas: T02 integrada à `main` pelo PR #7 (merge `e53518e`); não havia mudanças concorrentes publicadas nos menus desta etapa.
+- `main.c` inclui `rede.c` uma única vez e inicializa o cenário logístico após carregar CSV, Hash e índices. Falha de inicialização informa indisponibilidade da Logística sem encerrar o sistema ou bloquear os módulos do T1.
+- Implementado `rede_menu` na opção 8: listagem de regiões e conexões, caminho mínimo por IDs e árvore geradora mínima com arestas e custos em km. Mensagens para rede vazia/desconexa, destino inalcançável, IDs inválidos e cancelamento. O menu informa que o cenário não é reconstruído após alterações nas ocorrências.
+- Investigação (opção 4) reúne integridade e dependências em dois submenus. Opção 6 mantém acesso direto às mesmas dependências, com estado compartilhado. Planejamento (7) identifica explicitamente a geração de resumo junto da otimização. Consulta Rápida (2) e demais funções do T1 preservadas.
+- Criado `tests/teste_menus.py`, com dez testes de terminal usando apenas a biblioteca padrão do Python 3. Verificados oito acessos, retorno, integridade/dependências, estado compartilhado, listagens, Dijkstra/Prim, entradas inválidas, resumo, Consulta Rápida, fim da entrada, cadastro sem reconstruir a rede, CSV vazio e rede inválida. Os CSVs alternativos são temporários.
+- Custos conferidos pelo menu: ABINGTON–NORRISTOWN = 191,68 km; Prim = 40 arestas e 719,23 km. Todas as suítes C anteriores passaram com `-std=c11 -Wall -Wextra -Werror`, sem avisos no Windows. Os dez testes de terminal passaram.
+- README, roteiro dos menus e check da T06 atualizados. A regressão completa de alteração/remoção e demais operações permanece para a T07.
+- Próxima ação: T07, validação final e regressão do sistema integrado.
+
 ## Registro em Git
 
 - T01: commit `7b0ab7b`, `chore: adiciona validacao reproduzivel dos modulos 6 e 7`, na branch `chore/validacao-inicial`.
 - T02: branch `feat/modelagem-rede`, criada a partir da T01 para manter os testes disponíveis; commit com a mensagem `feat: define modelagem e contrato da rede logistica`.
+- T03: branch `feat/dijkstra`, criada a partir de `feat/modelagem-rede`, com construção da rede, Dijkstra e testes específicos.
+- T04: branch `feat/prim`, criada a partir de `feat/dijkstra`, com Prim e validação independente por Kruskal.
+- T05: branch `feat/resumo-regional`, criada a partir de `feat/prim`, com módulo 9 integrado à otimização e testes específicos.
+- T06: branch `feat/integracao-modos`, criada a partir de `feat/resumo-regional`, com Logística, Investigação e testes de terminal.
 - Este planejamento passa a ser versionado na raiz do repositório. Manter aqui os checks e o histórico das próximas tarefas.
-- Os registros de execução acima descrevem o estado ao concluir cada etapa. Os commits foram preparados posteriormente, a pedido de Mariana. Nenhum push ou PR foi realizado neste fechamento.
+- Os registros de execução descrevem o estado ao concluir cada etapa. T01 a T05 foram enviadas ao GitHub; a T06 segue o mesmo fluxo de commit e push. Na conferência de 27/11, a `main` remota contém T01 (PR #8, merge `4747f1a`) e T02 (PR #7, merge `e53518e`). T03 a T06 permanecem nas branches de desenvolvimento nessa conferência.
 
 ## Referências verificáveis
 
